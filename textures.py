@@ -1,0 +1,6 @@
+'''
+Last modified: 16.06.2020
+here we load the textures ...
+
+hier noch einlesen, wie man das einliest....
+'''
