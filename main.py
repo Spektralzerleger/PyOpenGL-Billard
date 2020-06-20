@@ -1,4 +1,5 @@
 from graphics import *
+from mytime import *
 from table import *
 # from ball import *
 from textures import *
@@ -19,8 +20,8 @@ border = 100
 width = 2540 + 2 * border
 height = 1270 + 2 * border
 
-holesize_middle = 69.85
-holesize_edges = 92.70
+holesize_middle = 69
+holesize_edges = 70
 zoom = 0.4
 ballRadius = 29.1
 
@@ -43,9 +44,14 @@ takt = 0.0004
 
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    
+    # load textures
+    table_texture = load_texture("Textures/tisch.bmp")
+    balken_texture = load_texture("Textures/balken.bmp")
+    gameover_texture = load_texture("Textures/gameover.bmp")
 
     # table and queue
-    table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, load_texture("Textures/tisch.bmp"), load_texture("Textures/balken.bmp"), 0)
+    table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, table_texture, balken_texture, gameover_texture)
     #queue = Queue()
 
     table.draw()
@@ -76,52 +82,50 @@ def display():
     glutSwapBuffers()
 
 '''
-void idle() {
-     
-  t = t + diff_seconds();
-  if(t > 0.25)
-    t = 0.0;
-  
-  while(t > takt && ! gameover) {
-          
-    int stehen = 0;      
-      
-    for(int i = 0; i < N; i++)  
-      if(kugel[i].bewegen(takt) == false)
-        stehen ++;         
- 
-    if(stehen == N) {
-              
-      if(! kugel[0].get_sichtbar() ){
-        kugel[0].set_x(600); 
-        kugel[0].set_y(hoehe / 2);  
-        kugel[0].set_sichtbar(true);
-        kugel[0].set_eingelocht(false);
-        kugel[0].set_radius(kugelRadius);
-        kugel[0].set_verschieben(true);
-      }
-      if(! kugel[0].get_eingelocht())
-        queue.init_position(kugel[0], zoom); 
-    }
-   
-    for(int i = 0; i < N; i++) {
-      kugel[i].kollision(tisch, takt);
-      kugel[i].ausrollen(takt);
-    }
-    
-    for(int i = 0; i < N; i++)
-      for(int j = i + 1; j < N; j++)
-        kugel[i].stossen(kugel[j], takt);  
-    
-    queue.anstossen(kugel[0], takt);
-        
-    t -= takt;
-  }
-      
-  display();     
-}
+def idle():
+    # timeflow
+    t = t + diff_seconds()
+    if t > 0.25:
+        t = 0.0
 
-// Wird aufgerufen, wenn eine Taste gedrückt wird:
+    while (t > takt and not gameover):
+
+        stand = 0
+
+        for i in range(N):
+            if balls[i].move(takt) == False:
+                stand += 1        
+
+        if stand == N:
+          
+            if balls[0].visible() == False:
+                balls[0].set_x(600)
+                balls[0].set_y(height / 2)
+                balls[0].set_sichtbar(True)
+                balls[0].set_eingelocht(False)
+                balls[0].set_radius(kugelRadius)
+                balls[0].set_verschieben(True)
+
+            if balls[0].get_eingelocht() == False:
+                queue.init_position(balls[0], zoom)
+
+        for i in range(N):
+            balls[i].kollision(table, takt)
+            balls[i].ausrollen(takt)
+
+        for i in range(N):
+            for j in range(i+1, N):
+                balls[i].stossen(balls[j], takt)
+
+        queue.anstossen(kugel[0], takt)
+
+        t -= takt
+
+    display()
+'''
+
+'''
+# is called when a button is pressed
 void keyboard(unsigned char key, int x, int y) {
      
   //cout << "Die Taste " << key << " wurde gedrueckt!" << endl;  
