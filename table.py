@@ -1,5 +1,5 @@
 '''
-Last modified: 16.06.2020
+Last modified: 20.06.2020
 Table class ...
 '''
 
@@ -90,13 +90,13 @@ class Table:
         glEnd()
         glDisable(GL_TEXTURE_2D)
         
-    '''
-    def drawGameover():
+
+    def drawGameover(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE)
 
-        glEnable(GL_textureE_2D)
-        glBindTexture(GL_textureE_2D, self.textureGameover)
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.textureGameover)
         glColor3f(1.0, 1.0, 1.0)
 
         glBegin(GL_QUADS)
@@ -107,7 +107,6 @@ class Table:
         glTexCoord2f(0.0, 1.0); glVertex2f(0.0, self.gameboardheight)
 
         glEnd()
-        glDisable(GL_textureE_2D)
+        glDisable(GL_TEXTURE_2D)
 
         glDisable(GL_BLEND)
-    '''
