@@ -27,6 +27,7 @@ def graphicsInit(windowname, width, height, zoom):
     glLoadIdentity()
     gluOrtho2D(0, width, 0, height)
     # glutReshapeFunc(graphicsChangeSize)
+    glEnable(GL_TEXTURE_2D)
 
 
 # draw ball with center (x, y) and radius
