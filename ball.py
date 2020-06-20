@@ -1,5 +1,5 @@
 '''
-Last modified: 18.06.2020
+Last modified: 20.06.2020
 here we define the ball class ...
 '''
 
@@ -30,6 +30,7 @@ def random_matrix():
 
     glPopMatrix()
     # glLoadIdentity()
+    return matrix
 
 '''
 def set_matrix():
@@ -76,7 +77,7 @@ class Ball:
         self.shift = False
         self.phi = 0.0
         # self.d = 0
-        # Textur = 0
+        # Textur = self.number
         
         '''
         if Textur == 0:
@@ -85,7 +86,7 @@ class Ball:
             Textur = LadeTextur(dateiname); 
         '''
         
-        random_matrix()
+        self.matrix = random_matrix()
         
         self.x_shadow = 10
         self.y_shadow = -6
@@ -96,7 +97,7 @@ class Ball:
             self.x += self.vx * t
             self.y += self.vy * t
             
-            v_norm = np.sqrt(self.vx**2 + self.vy**2) # could also define this in init
+            v_norm = np.sqrt(self.vx**2 + self.vy**2)
             self.phi = t * v_norm / self.radius
             
             glPushMatrix()
@@ -104,8 +105,8 @@ class Ball:
             
             if v_norm > 0.0:
                 glRotatef(self.phi * 180.0 / np.pi, -self.vy / v_norm, self.vx / v_norm, 0.0)
-                glMultMatrixd(matrix) # evtl. mit glMatrixMode(GL_MODELVIEW) wie oben
-                glGetDoublev(GL_MODELVIEW_MATRIX, matrix) # pyopengl works differently, matrix?
+                glMultMatrixd(self.matrix)
+                self.matrix = glGetDoublev(GL_MODELVIEW_MATRIX)
                 
             glPopMatrix()
             
@@ -119,9 +120,9 @@ class Ball:
                 self.vx *= v_prime_norm / v_norm
                 self.vy *= v_prime_norm / v_norm
             
-            # return true
+            return True
 
-        # return false
+        return False
             
         
         
@@ -166,13 +167,13 @@ class Ball:
 
             # turn on textures
             glEnable(GL_TEXTURE_2D)
-            glBindTexture(GL_TEXTURE_2D, Textur) ### fix
+            glBindTexture(GL_TEXTURE_2D, self.texture) ### fix
 
             # here we move, rotate and draw the ball
             glPushMatrix()
             glScalef(zoom, zoom, zoom)
             glTranslatef(self.x, self.y, 0.0)
-            glMultMatrixd(matrix)
+            glMultMatrixd(self.matrix)
             if self.radius > 1.0:
                 graphicsBall3D(self.radius)
             glPopMatrix()
