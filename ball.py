@@ -6,11 +6,11 @@ here we define the ball class ...
 from graphics import *
 from table import *
 from textures import *
-import numpy as np
 
 
 # First some help functions
 
+# create random matrix
 def random_matrix():
     # random angles
     theta1 = np.random.rand() * 360
@@ -25,13 +25,13 @@ def random_matrix():
     glRotatef(theta1, 1.0, 0.0, 0.0)
     glRotatef(theta2, 0.0, 1.0, 0.0)
     glRotatef(theta3, 0.0, 0.0, 1.0)
-    glGetDoublev(GL_MODELVIEW_MATRIX)
+    matrix = glGetDoublev(GL_MODELVIEW_MATRIX)  # ??
     glPopMatrix()
 
     glPopMatrix()
     # glLoadIdentity()
 
-
+'''
 def set_matrix():
     theta1 = -90
     theta2 = 105
@@ -52,7 +52,7 @@ def set_matrix():
 
     glPopMatrix()
     # glLoadIdentity()
-
+'''
 
 potted_stripes = 0
 potted_solids = 0

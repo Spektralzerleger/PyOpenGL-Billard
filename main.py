@@ -1,6 +1,7 @@
 from graphics import *
 from table import *
 # from ball import *
+from textures import *
 
 
 '''
@@ -34,11 +35,6 @@ gameover = False
 N = 16
 # Kugel kugel[N]; ??? ball class
 
-
-# table and queue
-table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, 0, 0, 0)
-#queue = Queue()
-
 # time measurement
 t = 0.0
 takt = 0.0004
@@ -48,8 +44,12 @@ takt = 0.0004
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    table.draw()
+    # table and queue
+    table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, load_texture("Textures/tisch.bmp"), load_texture("Textures/balken.bmp"), 0)
+    #queue = Queue()
 
+    table.draw()
+    
     '''
     queue.balkenzeichnen(tisch)
 

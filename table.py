@@ -50,10 +50,10 @@ class Table:
             glEnd()
         
         else:
-            glEnable(GL_TEXTURE_2D) # use this if other doesn't work...
-            glBindTexture(GL_textureE_2D, self.texture) # which texture?
+            glEnable(GL_TEXTURE_2D)
+            glBindTexture(GL_TEXTURE_2D, self.texture)
             glColor3f(1.0, 1.0, 1.0)
-        
+
             glBegin(GL_QUADS)
         
             glTexCoord2f(0.0, 0.0); glVertex2f(0.0, 0.0)
@@ -62,7 +62,8 @@ class Table:
             glTexCoord2f(0.0, 1.0); glVertex2f(0.0, self.gameboardheight)
         
             glEnd()
-            glDisable(GL_textureE_2D)
+
+            glDisable(GL_TEXTURE_2D)
     
 
         glColor3f(self.l_r, self.l_g, self.l_b)
@@ -74,9 +75,9 @@ class Table:
         # holes in middle:
         graphicsBall(self.gameboardwidth / 2, self.border, self.holesize_middle)
         graphicsBall(self.gameboardwidth / 2, self.gameboardheight - self.border, self.holesize_middle)
-        '''
-        glEnable(GL_textureE_2D)
-        glBindTexture(GL_textureE_2D, self.textureBalken) # texture
+
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.textureBalken)
         glColor3f(1.0, 1.0, 1.0)
 
         glBegin(GL_QUADS)
@@ -87,9 +88,9 @@ class Table:
         glTexCoord2f(1.0, 0.0); glVertex2f(0.0, self.gameboardheight)
 
         glEnd()
-        glDisable(GL_textureE_2D)
+        glDisable(GL_TEXTURE_2D)
         
-    
+    '''
     def drawGameover():
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE)
@@ -109,4 +110,4 @@ class Table:
         glDisable(GL_textureE_2D)
 
         glDisable(GL_BLEND)
-        '''
+    '''
