@@ -77,7 +77,7 @@ class Ball:
         self.shift = False
         self.phi = 0.0
         # self.d = 0
-        # Textur = self.number
+        self.texture = load_texture("Textures/{}.bmp".format(_number))
         
         '''
         if Textur == 0:
@@ -156,7 +156,7 @@ class Ball:
     def draw3d(self, zoom):
         # for "disappearing" animation
         # for all balls exept white and black 
-        if ((self.number == 0 and not self.visible) or (self.number == 8 and not self.visible)) == False:
+        if ((self.number == 0 and self.visible == False) or (self.number == 8 and self.visible == False)) == False:
 
             # set position of light source 
             light_position = [zoom * (self.x - 200.0), zoom * (self.y + 200.0), zoom * 200.0, 1.0]

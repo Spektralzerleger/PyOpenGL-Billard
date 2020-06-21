@@ -10,7 +10,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 graphicsTextBlending = False
-sphere = GLUquadricObj()
 
 # prevents that changing the window size changes the displayed graphics
 def graphicsChangeSize(width, height):
@@ -60,6 +59,7 @@ def graphicsText(x, y, text):
 
 
 def graphicsInit3D(width, height):
+    global sphere
     # create sphere
     sphere = gluNewQuadric()
     gluQuadricNormals(sphere, GLU_SMOOTH)
