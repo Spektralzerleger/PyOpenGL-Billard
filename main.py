@@ -1,7 +1,7 @@
 from graphics import *
 from mytime import *
 from table import *
-# from ball import *
+from ball import *
 from textures import *
 
 
@@ -43,19 +43,15 @@ takt = 0.0004
 
 
 def display():
+    #global table, ball
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    
-    # load textures
-    table_texture = load_texture("Textures/tisch.bmp")
-    balken_texture = load_texture("Textures/balken.bmp")
-    gameover_texture = load_texture("Textures/gameover.bmp")
-
-    # table and queue
-    table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, table_texture, balken_texture, gameover_texture)
-    #queue = Queue()
 
     table.draw()
     
+    graphicsEnable3D(window_width, window_height)
+    ball.draw3d(zoom)
+    graphicsDisable3D(window_width, window_height, zoom)
+
     '''
     queue.balkenzeichnen(tisch)
 
@@ -81,17 +77,17 @@ def display():
     glFlush()
     glutSwapBuffers()
 
-'''
+
 def idle():
+    global t
     # timeflow
     t = t + diff_seconds()
     if t > 0.25:
         t = 0.0
 
-    while (t > takt and not gameover):
-
+    while (t > takt and gameover == False):
         stand = 0
-
+        '''
         for i in range(N):
             if balls[i].move(takt) == False:
                 stand += 1        
@@ -118,11 +114,11 @@ def idle():
                 balls[i].stossen(balls[j], takt)
 
         queue.anstossen(kugel[0], takt)
-
+        '''
         t -= takt
 
     display()
-'''
+
 
 '''
 # is called when a button is pressed
@@ -203,12 +199,10 @@ void mouseMotion(int x, int y) {
 
 }
 
-// Die Funktion wird aufgerufen, wenn sich die Größe des Bildschirms ändert:
-void reshape(int width, int height) {
-     
-  glutReshapeWindow(fensterBreite, fensterHoehe);   
+# call this funtion when size of the window changes
+def reshape(width, height):
+    glutReshapeWindow(window_width, window_height)
 
-}
 
 void initKugeln() {
      
@@ -241,17 +235,28 @@ void initKugeln() {
 
 
 def main():
+    global table, ball
     # initialize graphics:
     graphicsInit("Billard", width + 275, height + 150, zoom)
     graphicsInit3D(width, height)
+    
+    # load textures
+    table_texture = load_texture("Textures/tisch.bmp")
+    balken_texture = load_texture("Textures/balken.bmp")
+    gameover_texture = load_texture("Textures/gameover.bmp")
+
+    # table and queue
+    table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, table_texture, balken_texture, gameover_texture)
+    #queue = Queue()
+    ball = Ball(680, 600, ballRadius, 0, 0, 1, 1, 1, 1, 2)
 
     # register display function:
     glutDisplayFunc(display)
 
-    '''
     # register idle function:
     glutIdleFunc(idle)
 
+    '''
     # register keyboard function:
     glutKeyboardFunc(keyboard)
 
@@ -259,8 +264,8 @@ def main():
     glutMouseFunc(mouse)
     glutPassiveMotionFunc(mouseMotion)
 
-    glutReshapeFunc(reshape)
-
+    # glutReshapeFunc(reshape)
+    
     textureBalken = LadeTextur("Texturen/balken.bmp")
 
     tisch.init(breite, hoehe, bande, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, lochgroesseMitte, lochgroesseEcke, 0.0, 0.0, 0.0, LadeTextur("Texturen/tisch.bmp"), texturBalken, LadeTextur("Texturen/gameover.bmp"));    
