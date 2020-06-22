@@ -9,19 +9,13 @@ from textures import *
 Rewrite this C++ Code into Python!!!
 '''
 
-
-'''
-// FORWARD-DEKLARATIONEN:
-void initKugeln(); ??
-'''
-
 # gameboard and window size
 border = 100
 width = 2540 + 2 * border
 height = 1270 + 2 * border
 
-holesize_middle = 69
-holesize_edges = 70
+holesize_middle = 62
+holesize_edges = 65
 zoom = 0.4
 ballRadius = 29.1
 
@@ -47,26 +41,22 @@ def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     table.draw()
-    
-    graphicsEnable3D(window_width, window_height)
-    ball.draw3d(zoom)
-    graphicsDisable3D(window_width, window_height, zoom)
 
     '''
     queue.balkenzeichnen(tisch)
+    '''
+    for i in range(N):
+        ball[i].draw_shadow()
 
-    for(int i = 0; i < N; i++)
-    kugel[i].schatten_zeichnen();
-
+    '''
     queue.schatten_zeichnen(kugel[0], zoom)
-
+    '''
     graphicsEnable3D(window_width, window_height)
-
-    for(int i = 0; i < N; i++)
-    kugel[i].zeichnen3d(zoom)
-
+    for i in range(N):
+        ball[i].draw3d(zoom)
     graphicsDisable3D(window_width, window_height, zoom)
 
+    '''
     queue.zeichnen(kugel[0], tisch, zoom)
 
     if(! kugel[8].get_sichtbar()) {
@@ -89,29 +79,29 @@ def idle():
         stand = 0
         '''
         for i in range(N):
-            if balls[i].move(takt) == False:
+            if ball[i].move(takt) == False:
                 stand += 1        
 
         if stand == N:
           
-            if balls[0].visible() == False:
-                balls[0].set_x(600)
-                balls[0].set_y(height / 2)
-                balls[0].set_sichtbar(True)
-                balls[0].set_eingelocht(False)
-                balls[0].set_radius(kugelRadius)
-                balls[0].set_verschieben(True)
+            if ball[0].visible == False:
+                ball[0].x = 600
+                ball[0].y = height / 2
+                ball[0].visble = True
+                ball[0].potted = False
+                ball[0].radius = ballRadius
+                ball[0].shift = True
 
-            if balls[0].get_eingelocht() == False:
-                queue.init_position(balls[0], zoom)
+            if ball[0].potted == False:
+                queue.init_position(ball[0], zoom)
 
         for i in range(N):
-            balls[i].kollision(table, takt)
-            balls[i].ausrollen(takt)
+            ball[i].kollision(table, takt)
+            ball[i].ausrollen(takt)
 
         for i in range(N):
             for j in range(i+1, N):
-                balls[i].stossen(balls[j], takt)
+                ball[i].stossen(balls[j], takt)
 
         queue.anstossen(kugel[0], takt)
         '''
@@ -177,65 +167,53 @@ void keyboard(unsigned char key, int x, int y) {
        
 }
   
-// Wird aufgerufen, wenn eine Maustaste gedrückt wird:
-void mouse(int button, int state, int x, int y) {
-     
-   //cout << "Eine Maustaste wurde an der Position " << x << " " << hoehe - y << " gedrueckt!" << endl;    
-     
-   if(state == GLUT_DOWN) {
-     kugel[0].set_verschieben(false);
-     queue.set_bewegung(true);
-   }
-     
-   if(state == GLUT_UP)
-     queue.set_bewegung(false);  
-}
+# is called when a mouse button is pressed
+def mouse(button, state, x, y):   
+    if state == GLUT_DOWN:
+        ball[0].shift = False
+        queue.set_bewegung(true);
+
+    if state == GLUT_UP:
+        queue.set_bewegung(false);  
 
 
-// Wird aufgerufen, wenn die Maus bewegt wird:
-void mouseMotion(int x, int y) {
-    
-  queue.set_mouse(int(x / zoom), int((fensterHoehe - y) / zoom)); 
+# is called when you move the mouse
+def mouseMotion(x, y):
+    queue.set_mouse(int(x / zoom), int((fensterHoehe - y) / zoom));
 
-}
 
 # call this funtion when size of the window changes
 def reshape(width, height):
     glutReshapeWindow(window_width, window_height)
-
-
-void initKugeln() {
-     
-  // Die Arrays geben die nummer der Kugeln an Bsp: Kugel [8] = schwarze 8: 
-  kugel[0].init(600, hoehe / 2, kugelRadius, 0.0, 0.0, 1.0, 1.0, 1.0, 10, 0);
-  //kugel[1].init(200, 200, kugelRadius, 0.0, 0.0, 1.0, 0.8, 0.0, 10, 1);
-  kugel[1].init(1815, hoehe / 2, kugelRadius, 0.0, 0.0, 1.0, 0.8, 0.0, 10, 1);
-  kugel[2].init(1870 + 55, hoehe / 2 + 70, kugelRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 2);
-  kugel[3].init(1870 + 55, hoehe / 2 - 70, kugelRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 3);
-  kugel[4].init(1870 +  3 *55, hoehe / 2 + 70, kugelRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 4);
-  kugel[5].init(1870 +  3 *55, hoehe / 2 + 2 * 70, kugelRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 5); 
-  kugel[6].init(1870 +  3 *55, hoehe / 2 - 70, kugelRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 6);
-  kugel[7].init(1870 + 2 * 55, hoehe / 2 + 35, kugelRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 7);
-  kugel[8].init(1870 + 55, hoehe / 2,kugelRadius, -0.0, 0.0, 0.0, 0.0, 0.0, 10, 8);
-  //kugel[8].init(300 , 300,kugelRadius, -0.0, 0.0, 0.0, 0.0, 0.0, 10, 8);
-  kugel[9].init(1870 +  3 *55, hoehe / 2, kugelRadius, -0.0, 0.0, 1.0, 0.8, 0.0, 10, 9);
-  kugel[10].init(1870 +  3 *55, hoehe / 2 - 2 * 70, kugelRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 10);
-  kugel[11].init(1870 +  2 *55, hoehe / 2 + 35 + 70, kugelRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 11);
-  kugel[12].init(1870 +  2 *55 , hoehe / 2 - 35, kugelRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 12);
-  kugel[13].init(1870 +  2 *55, hoehe / 2 - 35 - 70, kugelRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 13);
-  kugel[14].init(1870, hoehe / 2 + 35, kugelRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 14);
-  kugel[15].init(1870, hoehe / 2 - 35, kugelRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 15);
-  
-  gameover = false;
-
-}
-
 '''
+
+
+def initBalls():
+    global ball
+    # number is the number of the ball, e.g. 8 = black 8
+    ball = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    
+    ball[0] = Ball(600, height / 2, ballRadius, 0.0, 0.0, 1.0, 1.0, 1.0, 10, 0)
+    ball[1] = Ball(1815, height / 2, ballRadius, 0.0, 0.0, 1.0, 0.8, 0.0, 10, 1)
+    ball[2] = Ball(1870 + 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 2)
+    ball[3] = Ball(1870 + 55, height / 2 - 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 3)
+    ball[4] = Ball(1870 +  3 *55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 4)
+    ball[5] = Ball(1870 +  3 *55, height / 2 + 2 * 70, ballRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 5)
+    ball[6] = Ball(1870 +  3 *55, height / 2 - 70, ballRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 6)
+    ball[7] = Ball(1870 + 2 * 55, height / 2 + 35, ballRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 7)
+    ball[8] = Ball(1870 + 55, height / 2,ballRadius, -0.0, 0.0, 0.0, 0.0, 0.0, 10, 8)
+    ball[9] = Ball(1870 +  3 *55, height / 2, ballRadius, -0.0, 0.0, 1.0, 0.8, 0.0, 10, 9)
+    ball[10] = Ball(1870 +  3 *55, height / 2 - 2 * 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 10)
+    ball[11] = Ball(1870 +  2 *55, height / 2 + 35 + 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 11)
+    ball[12] = Ball(1870 +  2 *55 , height / 2 - 35, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 12)
+    ball[13] = Ball(1870 +  2 *55, height / 2 - 35 - 70, ballRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 13)
+    ball[14] = Ball(1870, height / 2 + 35, ballRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 14)
+    ball[15] = Ball(1870, height / 2 - 35, ballRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 15)
 
 
 
 def main():
-    global table, ball
+    global table
     # initialize graphics:
     graphicsInit("Billard", width + 275, height + 150, zoom)
     graphicsInit3D(width, height)
@@ -248,8 +226,8 @@ def main():
     # table and queue
     table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, table_texture, balken_texture, gameover_texture)
     #queue = Queue()
-    ball = Ball(680, 600, ballRadius, 0, 0, 1, 1, 1, 1, 2)
 
+    initBalls()
     # register display function:
     glutDisplayFunc(display)
 
@@ -267,7 +245,6 @@ def main():
     # glutReshapeFunc(reshape)
     
     textureBalken = LadeTextur("Texturen/balken.bmp")
-
     tisch.init(breite, hoehe, bande, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, lochgroesseMitte, lochgroesseEcke, 0.0, 0.0, 0.0, LadeTextur("Texturen/tisch.bmp"), texturBalken, LadeTextur("Texturen/gameover.bmp"));    
 
     initKugeln()
@@ -276,7 +253,7 @@ def main():
     queue.init_position(kugel[0], zoom)
 
     # time measurement:
-    diff_seconds()   
+    diff_seconds()       # do I need this?
     '''
             
     # show window:          
