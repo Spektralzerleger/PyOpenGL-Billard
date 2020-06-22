@@ -32,3 +32,12 @@ try:
 except:
   print("ERROR: PyOpenGL not installed properly.")
 ```
+Moreover, I use PIL to load the textures and work with the images. If you haven't installed it, try
+```
+pip install Pillow
+```
+## The Game
+Short story: Originally, the game was implemented in C++ when I participated at the JuniorScienceAcademy in 2013. <br/>
+Now, I wanted to refresh my knowledge in OpenGL and "translate" the code to Python.
+
+Put a Screenshot here
