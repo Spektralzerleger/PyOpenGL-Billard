@@ -182,7 +182,7 @@ class Ball:
             glDisable(GL_TEXTURE_2D)
 
 
-'''
+    '''
     def collision(table, t):
         width = table.get_gameboardwidth()
         height = table.get_gameboardheight()
@@ -282,7 +282,17 @@ class Ball:
                 self.x = self.radius
                 self.y = 1545
    
-...
-missing ...
-             
-'''
+
+        missing ...      
+        '''
+
+    def draw_shadow(self):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR)
+
+        glColor3f(0.3, 0.3, 0.3)
+
+        if self.visible:
+            graphicsBall(self.x + self.x_shadow, self.y + self.y_shadow, 1.2 * self.radius)
+
+        glDisable(GL_BLEND)
