@@ -1,5 +1,6 @@
 '''
-Last modified: 16.06.2020
+Last modified: 25.06.2020
+
 Graphics help functions, which enable a comfortable usage of the OpenGL libraries.
 '''
 

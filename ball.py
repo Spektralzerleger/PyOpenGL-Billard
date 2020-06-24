@@ -1,6 +1,7 @@
 '''
-Last modified: 20.06.2020
-here we define the ball class ...
+Last modified: 25.06.2020
+
+The ball class is defined here. All the important informations of a ball are stored here.
 '''
 
 from graphics import *

@@ -1,3 +1,12 @@
+'''
+Edited by: Eugen Dizer
+Last modified: 25.06.2020
+
+This is the main part of the code where the GLUT window is initialized and the graphics is rendered.
+Here, you can also change the setup like the number of balls, their friction or the window size.
+
+'''
+
 from graphics import *
 from mytime import *
 from table import *
@@ -37,7 +46,6 @@ takt = 0.0004
 
 
 def display():
-    #global table, ball
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     table.draw()
@@ -187,10 +195,38 @@ def reshape(width, height):
     glutReshapeWindow(window_width, window_height)
 '''
 
+def initTable():
+    '''Here we initialize our billard table. The table has the following properties:
+            Table(width, height, border, holesize_middle, holesize_edges, table_texture, balken_texture, gameover_texture)
+        * width, height = width and height of the whole table
+        * border = size of the brown border
+        * holesize_middle = size of the holes in the upper and lower middle
+        * holesize_edges = size of the holes on the edges
+        * table_texture = texture of the table
+        * balken_texture = texture of the wood above the table
+        * gameover_texture = texture for "game over" scene in the end
+    '''
+    global table
+    # load textures
+    table_texture = load_texture("Textures/tisch.bmp")
+    balken_texture = load_texture("Textures/balken.bmp")
+    gameover_texture = load_texture("Textures/gameover.bmp")
+    
+    table = Table(width, height, border, holesize_middle, holesize_edges, table_texture, balken_texture, gameover_texture)
+
 
 def initBalls():
+    '''Here we initialize our 16 balls. A ball has the following properties:
+            Ball(x, y, radius, vx, vy, r, g, b, m, number)
+        * x, y = Initial (x, y) position coordinates
+        * radius = Ball radius
+        * vx, vy = Initial (x, y) velocity components
+        * r, g, b = ???
+        * m = Mass of the ball (do I need it?)
+        * number = Ball number, defines also texture (e.g. 8 = black 8)
+    '''
     global ball
-    # number is the number of the ball, e.g. 8 = black 8
+    # list of all balls, sorted by their number
     ball = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     
     ball[0] = Ball(600, height / 2, ballRadius, 0.0, 0.0, 1.0, 1.0, 1.0, 10, 0)
@@ -213,21 +249,17 @@ def initBalls():
 
 
 def main():
-    global table
     # initialize graphics:
     graphicsInit("Billard", width + 275, height + 150, zoom)
     graphicsInit3D(width, height)
     
-    # load textures
-    table_texture = load_texture("Textures/tisch.bmp")
-    balken_texture = load_texture("Textures/balken.bmp")
-    gameover_texture = load_texture("Textures/gameover.bmp")
-
-    # table and queue
-    table = Table(width, height, border, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, holesize_middle, holesize_edges, 0.0, 0.0, 0.0, table_texture, balken_texture, gameover_texture)
+    # initialize table and queue
+    initTable()
     #queue = Queue()
 
+    # initialize balls
     initBalls()
+
     # register display function:
     glutDisplayFunc(display)
 
