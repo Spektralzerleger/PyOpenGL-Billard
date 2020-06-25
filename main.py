@@ -1,11 +1,11 @@
-'''
+"""
 Edited by: Eugen Dizer
 Last modified: 25.06.2020
 
 This is the main part of the code where the GLUT window is initialized and the graphics is rendered.
 Here, you can also change the setup like the number of balls, their friction or the window size.
 
-'''
+"""
 
 from graphics import *
 from mytime import *
@@ -14,9 +14,9 @@ from ball import *
 from textures import *
 
 
-'''
+"""
 Rewrite this C++ Code into Python!!!
-'''
+"""
 
 # gameboard and window size
 border = 100
@@ -44,34 +44,33 @@ t = 0.0
 takt = 0.0004
 
 
-
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     table.draw()
 
-    '''
+    """
     queue.balkenzeichnen(tisch)
-    '''
+    """
     for i in range(N):
         ball[i].draw_shadow()
 
-    '''
+    """
     queue.schatten_zeichnen(kugel[0], zoom)
-    '''
+    """
     graphicsEnable3D(window_width, window_height)
     for i in range(N):
         ball[i].draw3d(zoom)
     graphicsDisable3D(window_width, window_height, zoom)
 
-    '''
+    """
     queue.zeichnen(kugel[0], tisch, zoom)
 
     if(! kugel[8].get_sichtbar()) {
     gameover = True;
     tisch.zeichneGameover() 
     }
-    '''
+    """
     glFlush()
     glutSwapBuffers()
 
@@ -83,9 +82,9 @@ def idle():
     if t > 0.25:
         t = 0.0
 
-    while (t > takt and gameover == False):
+    while t > takt and gameover == False:
         stand = 0
-        '''
+        """
         for i in range(N):
             if ball[i].move(takt) == False:
                 stand += 1        
@@ -112,13 +111,13 @@ def idle():
                 ball[i].stossen(balls[j], takt)
 
         queue.anstossen(kugel[0], takt)
-        '''
+        """
         t -= takt
 
     display()
 
 
-'''
+"""
 # is called when a button is pressed
 void keyboard(unsigned char key, int x, int y) {
      
@@ -193,10 +192,11 @@ def mouseMotion(x, y):
 # call this funtion when size of the window changes
 def reshape(width, height):
     glutReshapeWindow(window_width, window_height)
-'''
+"""
+
 
 def initTable():
-    '''Here we initialize our billard table. The table has the following properties:
+    """Here we initialize our billard table. The table has the following properties:
             Table(width, height, border, holesize_middle, holesize_edges, table_texture, balken_texture, gameover_texture)
         * width, height = width and height of the whole table
         * border = size of the brown border
@@ -205,18 +205,27 @@ def initTable():
         * table_texture = texture of the table
         * balken_texture = texture of the wood above the table
         * gameover_texture = texture for "game over" scene in the end
-    '''
+    """
     global table
     # load textures
     table_texture = load_texture("Textures/tisch.bmp")
     balken_texture = load_texture("Textures/balken.bmp")
     gameover_texture = load_texture("Textures/gameover.bmp")
-    
-    table = Table(width, height, border, holesize_middle, holesize_edges, table_texture, balken_texture, gameover_texture)
+
+    table = Table(
+        width,
+        height,
+        border,
+        holesize_middle,
+        holesize_edges,
+        table_texture,
+        balken_texture,
+        gameover_texture,
+    )
 
 
 def initBalls():
-    '''Here we initialize our 16 balls. A ball has the following properties:
+    """Here we initialize our 16 balls. A ball has the following properties:
             Ball(x, y, radius, vx, vy, r, g, b, m, number)
         * x, y = Initial (x, y) position coordinates
         * radius = Ball radius
@@ -224,38 +233,86 @@ def initBalls():
         * r, g, b = ???
         * m = Mass of the ball (do I need it?)
         * number = Ball number, defines also texture (e.g. 8 = black 8)
-    '''
+    """
     global ball
     # list of all balls, sorted by their number
     ball = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    
+
     ball[0] = Ball(600, height / 2, ballRadius, 0.0, 0.0, 1.0, 1.0, 1.0, 10, 0)
     ball[1] = Ball(1815, height / 2, ballRadius, 0.0, 0.0, 1.0, 0.8, 0.0, 10, 1)
-    ball[2] = Ball(1870 + 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 2)
-    ball[3] = Ball(1870 + 55, height / 2 - 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 3)
-    ball[4] = Ball(1870 +  3 *55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 4)
-    ball[5] = Ball(1870 +  3 *55, height / 2 + 2 * 70, ballRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 5)
-    ball[6] = Ball(1870 +  3 *55, height / 2 - 70, ballRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 6)
-    ball[7] = Ball(1870 + 2 * 55, height / 2 + 35, ballRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 7)
-    ball[8] = Ball(1870 + 55, height / 2,ballRadius, -0.0, 0.0, 0.0, 0.0, 0.0, 10, 8)
-    ball[9] = Ball(1870 +  3 *55, height / 2, ballRadius, -0.0, 0.0, 1.0, 0.8, 0.0, 10, 9)
-    ball[10] = Ball(1870 +  3 *55, height / 2 - 2 * 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 10)
-    ball[11] = Ball(1870 +  2 *55, height / 2 + 35 + 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 11)
-    ball[12] = Ball(1870 +  2 *55 , height / 2 - 35, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 12)
-    ball[13] = Ball(1870 +  2 *55, height / 2 - 35 - 70, ballRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 13)
+    ball[2] = Ball(
+        1870 + 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 2
+    )
+    ball[3] = Ball(
+        1870 + 55, height / 2 - 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 3
+    )
+    ball[4] = Ball(
+        1870 + 3 * 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 4
+    )
+    ball[5] = Ball(
+        1870 + 3 * 55, height / 2 + 2 * 70, ballRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 5
+    )
+    ball[6] = Ball(
+        1870 + 3 * 55, height / 2 - 70, ballRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 6
+    )
+    ball[7] = Ball(
+        1870 + 2 * 55, height / 2 + 35, ballRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 7
+    )
+    ball[8] = Ball(1870 + 55, height / 2, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.0, 10, 8)
+    ball[9] = Ball(
+        1870 + 3 * 55, height / 2, ballRadius, -0.0, 0.0, 1.0, 0.8, 0.0, 10, 9
+    )
+    ball[10] = Ball(
+        1870 + 3 * 55,
+        height / 2 - 2 * 70,
+        ballRadius,
+        -0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.67,
+        10,
+        10,
+    )
+    ball[11] = Ball(
+        1870 + 2 * 55,
+        height / 2 + 35 + 70,
+        ballRadius,
+        -0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        10,
+        11,
+    )
+    ball[12] = Ball(
+        1870 + 2 * 55, height / 2 - 35, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 12
+    )
+    ball[13] = Ball(
+        1870 + 2 * 55,
+        height / 2 - 35 - 70,
+        ballRadius,
+        -0.0,
+        0.0,
+        1.0,
+        0.5,
+        0.0,
+        10,
+        13,
+    )
     ball[14] = Ball(1870, height / 2 + 35, ballRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 14)
     ball[15] = Ball(1870, height / 2 - 35, ballRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 15)
-
 
 
 def main():
     # initialize graphics:
     graphicsInit("Billard", width + 275, height + 150, zoom)
     graphicsInit3D(width, height)
-    
+
     # initialize table and queue
     initTable()
-    #queue = Queue()
+    # queue = Queue()
 
     # initialize balls
     initBalls()
@@ -266,7 +323,7 @@ def main():
     # register idle function:
     glutIdleFunc(idle)
 
-    '''
+    """
     # register keyboard function:
     glutKeyboardFunc(keyboard)
 
@@ -286,9 +343,9 @@ def main():
 
     # time measurement:
     diff_seconds()       # do I need this?
-    '''
-            
-    # show window:          
+    """
+
+    # show window:
     glutMainLoop()
 
 

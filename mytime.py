@@ -1,12 +1,13 @@
-'''
+"""
 Last modified: 17.06.2020
 Time help functions...
-'''
+"""
 
 import time
 
 my_time_initialized = False
 start_time = time.time()
+
 
 def diff_seconds():
     global my_time_initialized

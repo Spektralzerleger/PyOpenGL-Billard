@@ -1,8 +1,8 @@
-'''
+"""
 Last modified: 25.06.2020
 
 Graphics help functions, which enable a comfortable usage of the OpenGL libraries.
-'''
+"""
 
 import sys
 import numpy as np
@@ -15,6 +15,7 @@ graphicsTextBlending = False
 # prevents that changing the window size changes the displayed graphics
 def graphicsChangeSize(width, height):
     return
+
 
 # initialize a GLUT-graphics window
 def graphicsInit(windowname, width, height, zoom):
@@ -35,13 +36,13 @@ def graphicsInit(windowname, width, height, zoom):
 def graphicsBall(x, y, radius):
     glBegin(GL_POLYGON)
     step = np.pi / 32
-    for angle in np.arange(0.0, 2*np.pi, step):
-        glVertex2f(x + radius*np.cos(angle), y + radius*np.sin(angle))
+    for angle in np.arange(0.0, 2 * np.pi, step):
+        glVertex2f(x + radius * np.cos(angle), y + radius * np.sin(angle))
     glVertex2f(x + radius, y)
     glEnd()
 
 
-'''
+"""
 # displays text as Bitmap
 # takes position (x, y) and text as string
 def graphicsText(x, y, text):
@@ -56,7 +57,7 @@ def graphicsText(x, y, text):
     
     if graphicsTextBlending:
         glDisable(GL_BLEND)
-'''
+"""
 
 
 def graphicsInit3D(width, height):
@@ -96,14 +97,14 @@ def graphicsEnable3D(width, height):
     glColor3f(1.0, 1.0, 1.0)
 
 
-def graphicsDisable3D(width, height, zoom):     
+def graphicsDisable3D(width, height, zoom):
     glDisable(GL_LIGHTING)
     glDisable(GL_COLOR_MATERIAL)
     glDisable(GL_DEPTH_TEST)
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluOrtho2D(0, width, 0, height)       
+    gluOrtho2D(0, width, 0, height)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     glScalef(zoom, zoom, zoom)
