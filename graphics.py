@@ -1,5 +1,5 @@
 """
-Last modified: 25.06.2020
+Last modified: 28.06.2020
 
 Graphics help functions, which enable a comfortable usage of the OpenGL libraries.
 """
@@ -12,13 +12,26 @@ from OpenGL.GLUT import *
 
 graphicsTextBlending = False
 
-# prevents that changing the window size changes the displayed graphics
+
 def graphicsChangeSize(width, height):
+    """Prevents that changing the window size changes the displayed graphics.
+
+    Args:
+        width (int): Window width
+        height (int): Window height
+    """
     return
 
 
-# initialize a GLUT-graphics window
 def graphicsInit(windowname, width, height, zoom):
+    """Initialize a GLUT-graphics window.
+
+    Args:
+        windowname (string): Name of the GLUT window, e.g. "Billard".
+        width (int): Window width
+        height (int): Window height
+        zoom (float): Zoom factor to scale the window size
+    """
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(int(zoom * width), int(zoom * height))
@@ -28,12 +41,16 @@ def graphicsInit(windowname, width, height, zoom):
     glLoadIdentity()
     gluOrtho2D(0, width, 0, height)
     # glutReshapeFunc(graphicsChangeSize)
-    glEnable(GL_TEXTURE_2D)
 
 
-# draw ball with center (x, y) and radius
-# color can be set right infront of the function
 def graphicsBall(x, y, radius):
+    """Draw 2D ball with center (x, y) and radius. Color can be set right in front of the function.
+
+    Args:
+        x (int): x coordinate of ball center
+        y (int): y coordinate of ball center
+        radius (float): Radius of the ball
+    """
     glBegin(GL_POLYGON)
     step = np.pi / 32
     for angle in np.arange(0.0, 2 * np.pi, step):
@@ -61,13 +78,19 @@ def graphicsText(x, y, text):
 
 
 def graphicsInit3D(width, height):
+    """Initialize 3D graphics mode.
+
+    Args:
+        width (int): what width?
+        height (int): what height?
+    """
     global sphere
-    # create sphere
+    # Create sphere
     sphere = gluNewQuadric()
     gluQuadricNormals(sphere, GLU_SMOOTH)
     gluQuadricTexture(sphere, GL_TRUE)
 
-    # create and turn on light
+    # Create and turn on light
     light_ambient = [0.33, 0.33, 0.33, 1.0]
     light_diffuse = [1.0, 1.0, 1.0, 1.0]
     light_specular = [1.0, 1.0, 1.0, 1.0]
@@ -78,6 +101,12 @@ def graphicsInit3D(width, height):
 
 
 def graphicsEnable3D(width, height):
+    """Enable 3D graphics mode.
+
+    Args:
+        width (int): what width?
+        height (int): what height?
+    """
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
 
@@ -98,6 +127,13 @@ def graphicsEnable3D(width, height):
 
 
 def graphicsDisable3D(width, height, zoom):
+    """Disable 3D graphics mode.
+
+    Args:
+        width (int): ?
+        height (int): ?
+        zoom (float): Zoom factor to scale the window size
+    """
     glDisable(GL_LIGHTING)
     glDisable(GL_COLOR_MATERIAL)
     glDisable(GL_DEPTH_TEST)
@@ -111,4 +147,9 @@ def graphicsDisable3D(width, height, zoom):
 
 
 def graphicsBall3D(radius):
+    """Draw 3D ball with given radius.
+
+    Args:
+        radius (float): Radius of the ball
+    """
     gluSphere(sphere, radius, 20, 20)

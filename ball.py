@@ -1,5 +1,5 @@
 """
-Last modified: 25.06.2020
+Last modified: 28.06.2020
 
 The ball class is defined here. All the important informations of a ball are stored here.
 """
@@ -11,9 +11,14 @@ from textures import *
 
 # First some help functions
 
-# create random matrix
+# Create random matrix
 def random_matrix():
-    # random angles
+    """Function that creates a random matrix for initial ball position.
+
+    Returns:
+        matrix: Start configuration of ball
+    """    
+    # Initialize random angles
     theta1 = np.random.rand() * 360
     theta2 = np.random.rand() * 360
     theta3 = np.random.rand() * 360
@@ -30,7 +35,7 @@ def random_matrix():
     glPopMatrix()
 
     glPopMatrix()
-    # glLoadIdentity()
+    #glLoadIdentity() ??
     return matrix
 
 
@@ -63,6 +68,20 @@ potted_solids = 0
 
 class Ball:
     def __init__(self, _x, _y, _radius, _vx, _vy, _r, _g, _b, _m, _number):
+        """Define a ball.
+
+        Args:
+            _x (int): x coordinate of the balls center position
+            _y (int): y coordinate of the balls center position
+            _radius (float): Radius of the ball
+            _vx (float): x component of the balls velocity
+            _vy (float): y component of the balls velocity
+            _r ([type]): [description] ?
+            _g ([type]): [description] ?
+            _b ([type]): [description] ?
+            _m ([type]): [description] ?
+            _number (int): Number of the ball. Defines also the texture.
+        """
         self.x = _x
         self.y = _y
         self.radius = _radius
@@ -74,11 +93,12 @@ class Ball:
         self.m = _m
         self.number = _number
 
+        # Comment....
         self.visible = True
         self.potted = False
         self.shift = False
         self.phi = 0.0
-        # self.d = 0
+        #self.d = 0
         self.texture = load_texture("Textures/{}.bmp".format(_number))
 
         """
@@ -105,15 +125,13 @@ class Ball:
             glLoadIdentity()
 
             if v_norm > 0.0:
-                glRotatef(
-                    self.phi * 180.0 / np.pi, -self.vy / v_norm, self.vx / v_norm, 0.0
-                )
+                glRotatef(self.phi * 180.0 / np.pi, -self.vy / v_norm, self.vx / v_norm, 0.0)
                 glMultMatrixd(self.matrix)
                 self.matrix = glGetDoublev(GL_MODELVIEW_MATRIX)
 
             glPopMatrix()
 
-            # friction
+            # Friction!!!
             if v_norm > 0.0:
                 v_prime_norm = v_norm - 68 * t  # tune this parameter for real effect
 
@@ -123,11 +141,13 @@ class Ball:
                 self.vx *= v_prime_norm / v_norm
                 self.vy *= v_prime_norm / v_norm
 
-            return True
-
+                return True
+        # Add comment
         return False
 
     def draw(self):
+        """Draw a 2D ball...
+        """        
         if self.visible:
             glColor3f(self.r, self.g, self.b)
             graphicsBall(self.x, self.y, self.radius)
@@ -155,30 +175,27 @@ class Ball:
                 """
 
     def draw3d(self, zoom):
-        # for "disappearing" animation
-        # for all balls exept white and black
-        if (
-            (self.number == 0 and self.visible == False)
-            or (self.number == 8 and self.visible == False)
-        ) == False:
+        """Draw the 3D ball...
 
-            # set position of light source
-            light_position = [
-                zoom * (self.x - 200.0),
-                zoom * (self.y + 200.0),
-                zoom * 200.0,
-                1.0,
-            ]
+        Args:
+            zoom (int): Zoom factor to scale the window size. Scales also the ball size.
+        """        
+        # For "disappearing" animation
+        # For all balls exept white and black
+        if ((self.number == 0 and self.visible == False) or (self.number == 8 and self.visible == False)) == False:
+
+            # Set position of light source because it depends on the position of the ball
+            light_position = [zoom * (self.x - 200.0), zoom * (self.y + 200.0), zoom * 200.0, 1.0]
             light_direction = [zoom * self.x, zoom * self.y, 0.0, 1.0]
 
             glLightfv(GL_LIGHT0, GL_POSITION, light_position)
             glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction)
 
-            # turn on textures
+            # Turn on textures
             glEnable(GL_TEXTURE_2D)
-            glBindTexture(GL_TEXTURE_2D, self.texture)  ### fix
+            glBindTexture(GL_TEXTURE_2D, self.texture)  ### fix ??
 
-            # here we move, rotate and draw the ball
+            # Here we move, rotate and draw the ball
             glPushMatrix()
             glScalef(zoom, zoom, zoom)
             glTranslatef(self.x, self.y, 0.0)
@@ -187,33 +204,32 @@ class Ball:
                 graphicsBall3D(self.radius)
             glPopMatrix()
 
-            # turn off textures
+            # Turn off textures
             glDisable(GL_TEXTURE_2D)
 
-    """
-    def collision(table, t):
-        width = table.get_gameboardwidth()
-        height = table.get_gameboardheight()
-        border = table.get_border()
+    def collision(self, table, t):  # vielleicht umbennen in ball_table_collision...
+        width = table.gameboardwidth
+        height = table.gameboardheight
+        border = table.border
 
         friction = 0.75
 
-        if potted != True:
-            if ((x + radius > breite - border) || (x - radius < border)) {
-                vx = -vx;
-                vx *= reibung;
-                vy *= reibung;
-                bewegen(t);
-            }
+        if self.potted == False:
+            if (self.x + self.radius > width - border) or (self.x - self.radius < border):
+                self.vx = -self.vx
+                self.vx *= friction
+                self.vy *= friction
+                self.move(t)
 
-            if((y + radius > hoehe - border) || (y - radius < border)) {
-                vy = -vy;
-                vx *= reibung;
-                vy *= reibung;
-                bewegen(t);
+            if (self.y + self.radius > height - border) or (self.y - self.radius < border):
+                self.vy = -self.vy
+                self.vx *= friction
+                self.vy *= friction
+                self.move(t)
 
-        disappear(table, t)
+        # disappear(table, t)
 
+    """
     counter = 0
     def disappear(table, t):
         hole_radius_middle = table.get_hole_radius_middle()
@@ -301,8 +317,6 @@ class Ball:
         glColor3f(0.3, 0.3, 0.3)
 
         if self.visible:
-            graphicsBall(
-                self.x + self.x_shadow, self.y + self.y_shadow, 1.2 * self.radius
-            )
+            graphicsBall(self.x + self.x_shadow, self.y + self.y_shadow, 1.2 * self.radius)
 
         glDisable(GL_BLEND)

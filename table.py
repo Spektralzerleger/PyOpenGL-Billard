@@ -1,5 +1,5 @@
 """
-Last modified: 25.06.2020
+Last modified: 28.06.2020
 
 The table class is defined here. You can change the layout of the table.
 """
@@ -9,17 +9,19 @@ from textures import *
 
 
 class Table:
-    def __init__(
-        self,
-        _gameboardwidth,
-        _gameboardheight,
-        _border,
-        _holesize_middle,
-        _holesize_edges,
-        _texture,
-        _textureBalken,
-        _textureGameover,
-    ):
+    def __init__(self, _gameboardwidth, _gameboardheight, _border, _holesize_middle, _holesize_edges, _texture, _textureBalken, _textureGameover):
+        """Define the billard table...
+
+        Args:
+            _gameboardwidth (int): Total table width
+            _gameboardheight (int): Total table height
+            _border (int): Width of the brown border around the billard table
+            _holesize_middle (float): [description]
+            _holesize_edges (float): ...
+            _texture (int): Texture ID of the billard table
+            _textureBalken (int): Texture ID of the ...
+            _textureGameover (int): Texture ID of the "Game Over" scene in the end of the game 
+        """
         self.gameboardwidth = _gameboardwidth
         self.gameboardheight = _gameboardheight
         self.border = _border
@@ -29,7 +31,7 @@ class Table:
         self.textureBalken = _textureBalken
         self.textureGameover = _textureGameover
 
-        # if no table texture detected, use the following values
+        # If no table texture detected, use the following values
         self.border_r = 0.5
         self.border_g = 0.0
         self.border_b = 0.0
@@ -54,9 +56,7 @@ class Table:
             glColor3f(self.gameboard_r, self.gameboard_g, self.gameboard_b)
             glVertex2f(self.border, self.border)
             glVertex2f(self.gameboardwidth - self.border, self.border)
-            glVertex2f(
-                self.gameboardwidth - self.border, self.gameboardheight - self.border
-            )
+            glVertex2f(self.gameboardwidth - self.border, self.gameboardheight - self.border)
             glVertex2f(self.border, self.gameboardheight - self.border)
             glEnd()
 
@@ -78,26 +78,14 @@ class Table:
             glDisable(GL_TEXTURE_2D)
 
         glColor3f(self.hole_r, self.hole_g, self.hole_b)
-        # holes on edges:
-        graphicsBall(
-            self.gameboardwidth - self.border,
-            self.gameboardheight - self.border,
-            self.holesize_edges,
-        )
-        graphicsBall(
-            self.gameboardwidth - self.border, 0 + self.border, self.holesize_edges
-        )
+        # Holes on edges:
+        graphicsBall(self.gameboardwidth - self.border, self.gameboardheight - self.border, self.holesize_edges)
+        graphicsBall(self.gameboardwidth - self.border, 0 + self.border, self.holesize_edges)
         graphicsBall(0 + self.border, 0 + self.border, self.holesize_edges)
-        graphicsBall(
-            0 + self.border, self.gameboardheight - self.border, self.holesize_edges
-        )
-        # holes in middle:
+        graphicsBall(0 + self.border, self.gameboardheight - self.border, self.holesize_edges)
+        # Holes in middle:
         graphicsBall(self.gameboardwidth / 2, self.border, self.holesize_middle)
-        graphicsBall(
-            self.gameboardwidth / 2,
-            self.gameboardheight - self.border,
-            self.holesize_middle,
-        )
+        graphicsBall(self.gameboardwidth / 2, self.gameboardheight - self.border, self.holesize_middle)
 
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.textureBalken)
