@@ -11,6 +11,7 @@ from graphics import *
 from mytime import *
 from table import *
 from ball import *
+# from queue import *
 from textures import *
 
 
@@ -21,17 +22,17 @@ UNITS: 1 corresponds to 1mm in reality
 """
 
 
-"""Gameboard size"""
+# Gameboard size
 border = 100
 width = 2540 + 2 * border
 height = 1270 + 2 * border
 
-"""Window size"""
+# Window size
 zoom = 0.4
 window_width = int((width + 275) * zoom)
 window_height = int((height + 150) * zoom)
 
-"""Hole and ball size"""
+# Hole and ball size
 holesize_middle = 62
 holesize_edges = 65
 ballRadius = 29.1
@@ -232,8 +233,8 @@ def initBalls():
     # List of all balls, sorted by their number
     ball = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
-    ball[0] = Ball(600, height / 2, ballRadius, 600.0, 600.0, 1.0, 1.0, 1.0, 10, 0)
-    ball[1] = Ball(1815, height / 2, ballRadius, 0.0, 0.0, 1.0, 0.8, 0.0, 10, 1)
+    ball[0] = Ball(600, height / 2, ballRadius, 0.0, 0.0, 1.0, 1.0, 1.0, 10, 0)
+    ball[1] = Ball(1815, height / 2, ballRadius, -400.0, 600.0, 1.0, 0.8, 0.0, 10, 1)
     ball[2] = Ball(1870 + 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 2)
     ball[3] = Ball(1870 + 55, height / 2 - 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 3)
     ball[4] = Ball(1870 + 3 * 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 4)
@@ -255,11 +256,9 @@ def main():
     graphicsInit("Billard", width + 275, height + 150, zoom)
     graphicsInit3D(width, height)
 
-    # Initialize table and queue
+    # Initialize objects
     initTable()
     # queue = Queue()
-
-    # Initialize balls
     initBalls()
 
     # Register display function:

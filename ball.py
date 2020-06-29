@@ -1,5 +1,5 @@
 """
-Last modified: 28.06.2020
+Last modified: 29.06.2020
 
 The ball class is defined here. All the important informations of a ball are stored here.
 """
@@ -31,7 +31,7 @@ def random_matrix():
     glRotatef(theta1, 1.0, 0.0, 0.0)
     glRotatef(theta2, 0.0, 1.0, 0.0)
     glRotatef(theta3, 0.0, 0.0, 1.0)
-    matrix = glGetDoublev(GL_MODELVIEW_MATRIX)  # ??
+    matrix = glGetDoublev(GL_MODELVIEW_MATRIX)
     glPopMatrix()
 
     glPopMatrix()
@@ -65,10 +65,12 @@ def set_matrix():
 potted_stripes = 0
 potted_solids = 0
 
+counter = 0
+
 
 class Ball:
     def __init__(self, _x, _y, _radius, _vx, _vy, _r, _g, _b, _m, _number):
-        """Define a ball.
+        """Initialize a ball.
 
         Args:
             _x (int): x coordinate of the balls center position
@@ -145,6 +147,7 @@ class Ball:
         # Add comment
         return False
 
+
     def draw(self):
         """Draw a 2D ball...
         """        
@@ -165,14 +168,11 @@ class Ball:
                 else:
                     glColor3f(0.0, 0.0, 0.0)
 
-                """
-                char str[10]
-                sprintf(str, "%i%", zahl)
                 if self.number < 10:
-                    graphicsText(x - 2, y - 3.5, str)
+                    graphicsText(self.x - 2, self.y - 3.5, str(self.number))
                 else:
-                    graphicsText(x - 4.5, y - 3.5, str)  # hier brauch ichs doch...
-                """
+                    graphicsText(self.x - 4.5, self.y - 3.5, str(self.number))
+    
 
     def draw3d(self, zoom):
         """Draw the 3D ball...
@@ -208,6 +208,7 @@ class Ball:
             glDisable(GL_TEXTURE_2D)
 
     def collision(self, table, t):  # vielleicht umbennen in ball_table_collision...
+        # Get the table size
         width = table.gameboardwidth
         height = table.gameboardheight
         border = table.border
@@ -227,88 +228,92 @@ class Ball:
                 self.vy *= friction
                 self.move(t)
 
-        # disappear(table, t)
+        self.disappear(table, t)
 
-    """
-    counter = 0
-    def disappear(table, t):
-        hole_radius_middle = table.get_hole_radius_middle()
-        hole_radius_edges = table.get_hole_radius_edges()
-        gameboard_width = table.get_gameboard_width()
-        gameboard_height = table.get_gameboard_height()
-        border = table.get_border()
 
-        d = np.zeros(6)
+    def disappear(self, table, t):
+        """Define what happens when a ball is potted.
+
+        Args:
+            table (object): Initialized table on which the balls are moving
+            t (float): Time variable
+        """
+        global counter
+        # Get the table and hole size
+        hole_radius_middle = table.holesize_middle
+        hole_radius_edges = table.holesize_edges
+        gameboard_width = table.gameboardwidth
+        gameboard_height = table.gameboardheight
+        border = table.border
+
+        # List of the balls distance to the ith hole
+        d = [0, 1, 2, 3, 4, 5]
 
         # upper right
-        d[0] = np.sqrt(((gameboard_width - border)-(self.x))*((gameboard_width - border)-(self.x))+((gameboard_height - border)-(self.y))*((gameboard_height - border)-(self.y)))
+        d[0] = np.sqrt(((gameboard_width - border)-(self.x))**2 + ((gameboard_height - border)-(self.y))**2)
         # lower right
-        d[1] = np.sqrt(((gameboard_width - border)-(self.x))*((gameboard_width - border)-(self.x))+((0 + border)-(self.y))*((0 + border)-(self.y)))
+        d[1] = np.sqrt(((gameboard_width - border)-(self.x))**2 + ((0 + border)-(self.y))**2)
         # lower left
-        d[2] = np.sqrt(((0 + border)-(self.x))*((0 + border)-(self.x))+((0 + border)-(self.y))*((0 + border)-(self.y)))
+        d[2] = np.sqrt(((0 + border)-(self.x))**2 + ((0 + border)-(self.y))**2)
         # upper left
-        d[3] = np.sqrt(((0 + border)-(self.x))*((0 + border)-(self.x))+((gameboard_height - border)-(self.y))*((gameboard_height - border)-(self.y)))
+        d[3] = np.sqrt(((0 + border)-(self.x))**2 + ((gameboard_height - border)-(self.y))**2)
         # upper middle
-        d[4] = np.sqrt(((gameboard_width / 2)-(self.x))*((gameboard_width / 2)-(self.x))+((border)-(self.y))*((border)-(self.y)))
+        d[4] = np.sqrt(((gameboard_width / 2)-(self.x))**2 + ((border)-(self.y))**2)
         # lower middle
-        d[5] = np.sqrt(((gameboard_width / 2)-(self.x))*((gameboard_width / 2)-(self.x))+((gameboard_height - border)-(self.y))*((gameboard_height - border)-(self.y)))
+        d[5] = np.sqrt(((gameboard_width / 2)-(self.x))**2 + ((gameboard_height - border)-(self.y))**2)
             
         # changes in "disappear"
         for i in range(4):    # holes on edges
             if d[i] < hole_radius_edges:
-                potted = True
+                self.potted = True
 
         for j in range(4, 6):
             if d[j] < hole_radius_middle: # holes in middle
-                potted = True
+                self.potted = True
 
-        if potted and visible:      
+        if (self.potted == True) and (self.visible == True):      
             self.radius -= 0.04 * 2000 * t
-            counter ++; # increase by 1
-        //std::cout << radius << " "  << zaehler << std::endl; 
+            counter += 1 # increase by 1
 
-        v_norm = np.sqrt(self.vx**2 + self.vy**2)
-        v_prime_norm = v_norm - 50000 * t
+            # stop the ball
+            v_norm = np.sqrt(self.vx**2 + self.vy**2)
+            v_prime_norm = v_norm - 50000 * t
+                    
+            if v_prime_norm < 0.0:
+                v_prime_norm = 0.0
+
+            if v_norm > 0.0:
+                self.vx *= v_prime_norm / v_norm
+                self.vy *= v_prime_norm / v_norm
+
                 
-        if v_prime_norm < 0.0:
-            v_prime_norm = 0.0
+            if self.radius < 1:
+                self.visible = False
 
-        if v_norm > 0.0:
-            self.vx *= v_prime_norm / v_norm
-            self.vy *= v_prime_norm / v_norm
+                if self.number != 8:
+                    self.radius = 29.1    # parameter
+                    self.vy = 0.0 
 
-        std::cout << v_betrag << " " << v_strich_betrag << std::endl;
-            
-        //cout << eingelocht << endl;
-            
-        if self.radius < 1:
-  
-            visible = False
-            if self.number != 8:
-                self.radius = 29.1    
-                self.vy = 0.0 
+                # set_matrix() ?
 
-            set_matrix();
+                if self.number == 0:
+                    self.vx = 0.0
 
-            if self.number == 0:
-                self.vx = 0.0
+                if self.number == 8:
+                    self.vx = 0.0
 
-            elif self.number == 8:
-                self.vx = 0.0
+                elif self.number > 8:  # stripes roll in from the right
+                    self.vx = -300
+                    self.x = 3015 - self.radius
+                    self.y = 1545
 
-            elif self.number > 8  # stripes roll in from the right
-                self.vx = -300
-                self.x = 3015 - self.radius
-                self.y = 1545
-
-            else:  # solids roll in from the left
-                self.vx = 300
-                self.x = self.radius
-                self.y = 1545
+                else:  # solids roll in from the left
+                    self.vx = 300
+                    self.x = self.radius
+                    self.y = 1545
    
+        # missing ...
 
-        missing ...      
-        """
 
     def draw_shadow(self):
         glEnable(GL_BLEND)

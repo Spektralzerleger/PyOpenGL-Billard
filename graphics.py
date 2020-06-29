@@ -1,5 +1,5 @@
 """
-Last modified: 28.06.2020
+Last modified: 29.06.2020
 
 Graphics help functions, which enable a comfortable usage of the OpenGL libraries.
 """
@@ -10,7 +10,6 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-graphicsTextBlending = False
 
 
 def graphicsChangeSize(width, height):
@@ -27,7 +26,7 @@ def graphicsInit(windowname, width, height, zoom):
     """Initialize a GLUT-graphics window.
 
     Args:
-        windowname (string): Name of the GLUT window, e.g. "Billard".
+        windowname (str): Name of the GLUT window, e.g. "Billard".
         width (int): Window width
         height (int): Window height
         zoom (float): Zoom factor to scale the window size
@@ -59,22 +58,17 @@ def graphicsBall(x, y, radius):
     glEnd()
 
 
-"""
-# displays text as Bitmap
-# takes position (x, y) and text as string
 def graphicsText(x, y, text):
-    if graphicsTextBlending:
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE)
+    """Displays text as Bitmap.
 
+    Args:
+        x (int): x coordinate of position.
+        y (int): y coordinate of position.
+        text (str): Text you want to display.
+    """
     glRasterPos2f(x, y)
-    
-    for(int i = 0; i < strlen(text); i++)
-    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, text[i])
-    
-    if graphicsTextBlending:
-        glDisable(GL_BLEND)
-"""
+    for i in range(len(text)):
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, ord(text[i]))
 
 
 def graphicsInit3D(width, height):
