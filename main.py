@@ -11,16 +11,15 @@ from graphics import *
 from mytime import *
 from table import *
 from ball import *
-# from queue import *
+from queue import *
 from textures import *
 
 
 """
-Rewrite this C++ Code into Python!!!
+FIX bugs, document!!!
 
 UNITS: 1 corresponds to 1mm in reality
 """
-
 
 # Gameboard size
 border = 100
@@ -54,23 +53,19 @@ def display():
 
     table.draw()
 
-    """
-    queue.balkenzeichnen(tisch)
-    """
+    queue.balkenzeichnen(table)
+
     for i in range(N):
         ball[i].draw_shadow()
 
-    """
-    queue.schatten_zeichnen(kugel[0], zoom)
-    """
+    queue.draw_shadow(ball[0], zoom)
+
     graphicsEnable3D(window_width, window_height)
     for i in range(N):
         ball[i].draw3d(zoom)
     graphicsDisable3D(window_width, window_height, zoom)
 
-    """
-    queue.zeichnen(kugel[0], tisch, zoom)
-    """
+    queue.draw(ball[0], table, zoom)
 
     if ball[8].visible == False:
         gameover = True
@@ -78,19 +73,20 @@ def display():
 
     glFlush()
     glutSwapBuffers()
+    return
 
 
 def idle():
     global t
     # timeflow
-    t = t + diff_seconds()
+    t = diff_seconds()
 
     """
     Fix idle and collision function!!!
     """
 
-    if t > 0.25:
-        t = 0.0
+    if t > 0.06:
+        t = 0.05
 
     while t > takt and gameover == False:
         stand = 0
@@ -107,93 +103,108 @@ def idle():
                 ball[0].potted = False
                 ball[0].radius = ballRadius
                 ball[0].shift = True
-        """
+
             if ball[0].potted == False:
                 queue.init_position(ball[0], zoom)
-        """
-        for i in range(N):
-            ball[i].collision(table, takt)
-            # ball[i].ausrollen(takt)
-        """
-        for i in range(N):
-            for j in range(i+1, N):
-                ball[i].stossen(balls[j], takt)
 
-        queue.anstossen(kugel[0], takt)
-        """
+        for i in range(N):
+            ball[i].table_collision(table, takt)
+            ball[i].roll_out(takt)
+
+        for i in range(N):
+            for j in range(i + 1, N):
+                ball[i].ball_collision(ball[j], takt)
+
+        queue.hit(ball[0], takt)
+
         t -= takt
 
-    display()  # or glutPostRedisplay()
+    glutPostRedisplay()
+    return
+
+
+def keyboard(key, x, y):
+    """This function is called when a button is pressed.
+
+    Args:
+        key (bytes): Which key is pressed
+        x (int): ?
+        y (int): ?
+    """
+    # Convert bytes object to string
+    key = key.decode("utf-8")
+
+    if key == "m":
+        for i in range(N):
+            if ball[i].potted == False:
+                ball[i].vx = 0.0
+                ball[i].vy = 0.0
+
+    if key == "n":
+        initBalls()
+        queue.init_postion2(ball[0], zoom)
+
+    if key == "q":
+        sys.exit()
+
+    if key == "1":
+        queue.design = 1
+
+    if key == "2":
+        queue.design = 2
+
+    if key == "3":
+        queue.design = 3
+
+    if key == "z":
+        queue.draw_target_assistance = not queue.draw_target_assistance
+
+    if key == "w":
+        if ball[0].shift == True:
+            if ball[0].y + ball[0].radius < height - border - 7.5:
+                ball[0].y = ball[0].y + 10 / zoom
+                queue.init_postion2(ball[0], zoom)
+
+    if key == "s":
+        if ball[0].shift == True:
+            if ball[0].y + ball[0].radius > ball[0].radius + border + 37.5:
+                ball[0].y = ball[0].y - 10 / zoom
+                queue.init_postion2(ball[0], zoom)
+    return
+
+
+def mouse(button, state, x, y):
+    """This function is called when a mouse button is pressed.
+
+    Args:
+        button ([type]): [description]
+        state ([type]): [description]
+        x ([type]): [description]
+        y ([type]): [description]
+    """
+    if state == GLUT_DOWN:
+        ball[0].shift = False
+        queue.move = True
+
+    if state == GLUT_UP:
+        queue.move = False
+    return
+
+
+def mouseMotion(x, y):
+    """This function is called when you move the mouse.
+
+    Args:
+        x ([type]): [description]
+        y ([type]): [description]
+    """
+    queue.mouse_x = int(x / zoom)
+    queue.mouse_y = int((window_height - y) / zoom)
+    return
 
 
 """
-# is called when a button is pressed
-def keyboard(key, x, y):
-  
-  if (key == 'm'):
-     for i in range(N):
-       if (kugel[i].potted == False):
-         ball[i].vx = 0.0
-         ball[i].vy = 0.0
-  
-  if(key == 'n') {
-    initBalls();
-    queue.init_postion2(kugel[0], zoom);
-  }
-  
-  if(key == 'q')     
-    exit(0);
-    
-  if(key == '1')
-    queue.set_design(1);
-    
-  if(key == '2')
-    queue.set_design(2);
-    
-  if(key == '3')
-    queue.set_design(3);
-    
-  if(key == 'z') 
-    queue.toggle_zielhilfe();   
-    
-    
-  if(key == 'w'){
-           
-    if(kugel[0].get_verschieben()){
-      if(kugel[0].get_y() + kugel[0].get_radius() <  hoehe - bande - 7.5) {                            
-        kugel[0].set_y ( kugel[0].get_y() + 10 / zoom);
-        queue.init_postion2(kugel[0], zoom);
-        }
-      }
-  }
-  
-  if(key == 's'){
-      if(kugel[0].get_verschieben()){
-          if(kugel[0].get_y() + kugel[0].get_radius() >  kugel[0].get_radius() + bande +37.5 ) {                      
-            kugel[0].set_y ( kugel[0].get_y() - 10 / zoom);
-            queue.init_postion2(kugel[0], zoom); 
-          }
-      }
-  }
-       
-}
-  
-# is called when a mouse button is pressed
-def mouse(button, state, x, y):   
-    if state == GLUT_DOWN:
-        ball[0].shift = False
-        queue.set_bewegung(true);
-
-    if state == GLUT_UP:
-        queue.set_bewegung(false);  
-
-
-# is called when you move the mouse
-def mouseMotion(x, y):
-    queue.set_mouse(int(x / zoom), int((fensterHoehe - y) / zoom));
-
-
-# call this funtion when size of the window changes
+# call this function when size of the window changes
 def reshape(width, height):
     glutReshapeWindow(window_width, window_height)
 """
@@ -217,6 +228,7 @@ def initTable():
     gameover_texture = load_texture("Textures/gameover.bmp")
 
     table = Table(width, height, border, holesize_middle, holesize_edges, table_texture, balken_texture, gameover_texture)
+    return
 
 
 def initBalls():
@@ -234,7 +246,7 @@ def initBalls():
     ball = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
     ball[0] = Ball(600, height / 2, ballRadius, 0.0, 0.0, 1.0, 1.0, 1.0, 10, 0)
-    ball[1] = Ball(1815, height / 2, ballRadius, -400.0, 600.0, 1.0, 0.8, 0.0, 10, 1)
+    ball[1] = Ball(1815, height / 2, ballRadius, 0.0, 0.0, 1.0, 0.8, 0.0, 10, 1)
     ball[2] = Ball(1870 + 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.0, 0.0, 0.67, 10, 2)
     ball[3] = Ball(1870 + 55, height / 2 - 70, ballRadius, -0.0, 0.0, 1.0, 0.0, 0.0, 10, 3)
     ball[4] = Ball(1870 + 3 * 55, height / 2 + 70, ballRadius, -0.0, 0.0, 0.4, 0.0, 0.6, 10, 4)
@@ -249,6 +261,22 @@ def initBalls():
     ball[13] = Ball(1870 + 2 * 55, height / 2 - 35 - 70, ballRadius, -0.0, 0.0, 1.0, 0.5, 0.0, 10, 13)
     ball[14] = Ball(1870, height / 2 + 35, ballRadius, -0.0, 0.0, 0.2, 0.7, 0.2, 10, 14)
     ball[15] = Ball(1870, height / 2 - 35, ballRadius, -0.0, 0.0, 0.5, 0.0, 0.0, 10, 15)
+    return
+
+
+def initQueue():
+    """Here we initialize the queue. The queue has the following properties:
+            Queue(v, a, texture)
+        * v = Initial ---
+        * a = Initial ---
+        * texture = ---
+    """
+    global queue, ball
+    # Load texture (think about an efficient way)
+    balken_texture = load_texture("Textures/balken.bmp")
+
+    queue = Queue(100.0, 15000.0, balken_texture)
+    return
 
 
 def main():
@@ -258,8 +286,9 @@ def main():
 
     # Initialize objects
     initTable()
-    # queue = Queue()
     initBalls()
+    initQueue()
+    queue.init_position(ball[0], zoom)
 
     # Register display function:
     glutDisplayFunc(display)
@@ -267,7 +296,6 @@ def main():
     # Register idle function:
     glutIdleFunc(idle)
 
-    """
     # register keyboard function:
     glutKeyboardFunc(keyboard)
 
@@ -276,18 +304,17 @@ def main():
     glutPassiveMotionFunc(mouseMotion)
 
     # glutReshapeFunc(reshape)
-    
-    textureBalken = LadeTextur("Texturen/balken.bmp")
-    tisch.init(breite, hoehe, bande, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, lochgroesseMitte, lochgroesseEcke, 0.0, 0.0, 0.0, LadeTextur("Texturen/tisch.bmp"), texturBalken, LadeTextur("Texturen/gameover.bmp"));    
 
-    initKugeln()
+    # textureBalken = LadeTextur("Texturen/balken.bmp")
+    # tisch.init(breite, hoehe, bande, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, lochgroesseMitte, lochgroesseEcke, 0.0, 0.0, 0.0, LadeTextur("Texturen/tisch.bmp"), texturBalken, LadeTextur("Texturen/gameover.bmp"));
 
-    queue.init(100.0, 15000.0, texturBalken)
-    queue.init_position(kugel[0], zoom)
+    # initKugeln()
+
+    # queue.init(100.0, 15000.0, texturBalken)
+    # queue.init_position(kugel[0], zoom)
 
     # time measurement:
-    diff_seconds()       # do I need this?
-    """
+    # diff_seconds()       # do I need this?
 
     # Show window:
     glutMainLoop()
