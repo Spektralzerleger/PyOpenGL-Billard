@@ -14,7 +14,7 @@ def diff_seconds():
 
     Returns:
         float: Time difference in seconds.
-    """    
+    """
     global my_time_initialized
     global start_time
 

@@ -11,7 +11,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 
-
 def graphicsChangeSize(width, height):
     """Prevents that changing the window size changes the displayed graphics.
 
