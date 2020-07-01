@@ -31,14 +31,14 @@ def graphicsInit(windowname, width, height, zoom):
         zoom (float): Zoom factor to scale the window size
     """
     glutInit(sys.argv)
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE)
     glutInitWindowSize(int(zoom * width), int(zoom * height))
     glutInitWindowPosition(0, 20)
     glutCreateWindow(windowname)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluOrtho2D(0, width, 0, height)
-    # glutReshapeFunc(graphicsChangeSize)
+    #glutReshapeFunc(graphicsChangeSize)
 
 
 def graphicsBall(x, y, radius):

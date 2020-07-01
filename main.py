@@ -1,10 +1,13 @@
 """
 Edited by: Eugen Dizer
-Last modified: 28.06.2020
+Last modified: 01.07.2020
 
 This is the main part of the code where the GLUT window is initialized and the graphics is rendered.
 Here, you can also change the setup like the number of balls, their friction or the window size.
 
+To do: FIX bugs, document!!!
+
+UNITS: 1 corresponds to 1mm in reality
 """
 
 from graphics import *
@@ -14,12 +17,6 @@ from ball import *
 from queue import *
 from textures import *
 
-
-"""
-FIX bugs, document!!!
-
-UNITS: 1 corresponds to 1mm in reality
-"""
 
 # Gameboard size
 border = 100
@@ -36,11 +33,10 @@ holesize_middle = 62
 holesize_edges = 65
 ballRadius = 29.1
 
-
-gameover = False
-
 # Number of balls
 N = 16
+
+gameover = False
 
 # Time measurement
 t = 0.0
@@ -48,6 +44,8 @@ takt = 0.0004
 
 
 def display():
+    """This function says what is drawn and shown on the display.
+    """
     global gameover
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -77,20 +75,24 @@ def display():
 
 
 def idle():
+    """This function is responsible for the continuous animation.
+    The idle callback is continuously called when events are not being received.
+    """
     global t
-    # timeflow
+    # Timeflow
     t = diff_seconds()
-
     """
-    Fix idle and collision function!!!
+    Fix idle and collision function!!! maybe with timer function?
     """
+    if t > 0.25:
+        t = 0.0
 
-    if t > 0.06:
-        t = 0.05
-
+    # One needs these smaller time steps to capture the collisions accurately.
+    # Larger time steps will lead to a strange collision behavior.
     while t > takt and gameover == False:
         stand = 0
 
+        # Check for standing balls
         for i in range(N):
             if ball[i].move(takt) == False:
                 stand += 1
@@ -107,29 +109,34 @@ def idle():
             if ball[0].potted == False:
                 queue.init_position(ball[0], zoom)
 
+        # Check the collision with the table
         for i in range(N):
             ball[i].table_collision(table, takt)
             ball[i].roll_out(takt)
 
+        # Check the collision with other balls
         for i in range(N):
             for j in range(i + 1, N):
                 ball[i].ball_collision(ball[j], takt)
 
+        # Move the queue
         queue.hit(ball[0], takt)
 
         t -= takt
 
+    # Redraw the scene
     glutPostRedisplay()
     return
 
 
 def keyboard(key, x, y):
     """This function is called when a button is pressed.
+    Maybe make a menu where you can see all the possible keys and their actions.
 
     Args:
-        key (bytes): Which key is pressed
-        x (int): ?
-        y (int): ?
+        key (bytes): Generated character which key is pressed.
+        x (int): x coordinate (window relative) of the mouse when the key was pressed.
+        y (int): y coordinate (window relative) of the mouse when the key was pressed.
     """
     # Convert bytes object to string
     key = key.decode("utf-8")
@@ -177,10 +184,10 @@ def mouse(button, state, x, y):
     """This function is called when a mouse button is pressed.
 
     Args:
-        button ([type]): [description]
-        state ([type]): [description]
-        x ([type]): [description]
-        y ([type]): [description]
+        button (int): Which mouse button is pressed (GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, or GLUT_RIGHT_BUTTON).
+        state (int): Is the mouse pressed or released? (GLUT_DOWN or GLUT_UP)
+        x (int): x coordinate (window relative) of the mouse when the button was pressed.
+        y (int): y coordinate (window relative) of the mouse when the button was pressed.
     """
     if state == GLUT_DOWN:
         ball[0].shift = False
@@ -195,8 +202,8 @@ def mouseMotion(x, y):
     """This function is called when you move the mouse.
 
     Args:
-        x ([type]): [description]
-        y ([type]): [description]
+        x (int): x coordinate (window relative) of the mouse.
+        y (int): y coordinate (window relative) of the mouse.
     """
     queue.mouse_x = int(x / zoom)
     queue.mouse_y = int((window_height - y) / zoom)
@@ -204,7 +211,7 @@ def mouseMotion(x, y):
 
 
 """
-# call this function when size of the window changes
+# Call this function when size of the window changes
 def reshape(width, height):
     glutReshapeWindow(window_width, window_height)
 """
@@ -213,13 +220,13 @@ def reshape(width, height):
 def initTable():
     """Here we initialize our billard table. The table has the following properties:
             Table(width, height, border, holesize_middle, holesize_edges, table_texture, balken_texture, gameover_texture)
-        * width, height = width and height of the whole table
-        * border = size of the brown border
-        * holesize_middle = size of the holes in the upper and lower middle
-        * holesize_edges = size of the holes on the edges
-        * table_texture = texture of the table
-        * balken_texture = texture of the wood above the table
-        * gameover_texture = texture for "game over" scene in the end
+        * width, height = Width and height of the whole table.
+        * border = Size of the brown border.
+        * holesize_middle = Size of the holes in the upper and lower middle.
+        * holesize_edges = Size of the holes on the edges.
+        * table_texture = Texture of the table.
+        * balken_texture = Texture of the wood above the table.
+        * gameover_texture = Texture for "game over" scene in the end.
     """
     global table
     # Load textures
@@ -234,12 +241,12 @@ def initTable():
 def initBalls():
     """Here we initialize our 16 balls. A ball has the following properties:
             Ball(x, y, radius, vx, vy, r, g, b, m, number)
-        * x, y = Initial (x, y) position coordinates
-        * radius = Ball radius
-        * vx, vy = Initial (x, y) velocity components
-        * r, g, b = ???
-        * m = Mass of the ball (do I need it?)
-        * number = Ball number, defines also texture (e.g. 8 = black 8)
+        * x, y = Initial (x, y) position coordinates.
+        * radius = Ball radius.
+        * vx, vy = Initial (x, y) velocity components.
+        * r, g, b = RGB color values for the case that no texture is available.
+        * m = Mass of the ball (do I need it?) -> maybe define on the top of main.py
+        * number = Ball number, defines also texture (e.g. 8 = black 8).
     """
     global ball
     # List of all balls, sorted by their number
@@ -267,24 +274,25 @@ def initBalls():
 def initQueue():
     """Here we initialize the queue. The queue has the following properties:
             Queue(v, a, texture)
-        * v = Initial ---
-        * a = Initial ---
-        * texture = ---
+        * v = Initial --- ?
+        * a = Initial --- ?
+        * texture = Texture of the strength indicator on the right side of the window.
     """
     global queue, ball
-    # Load texture (think about an efficient way)
+    # Load texture (think about a more efficient way?)
     balken_texture = load_texture("Textures/balken.bmp")
 
     queue = Queue(100.0, 15000.0, balken_texture)
     return
 
 
+
 def main():
-    # Initialize graphics:
+    # Initialize window graphics:
     graphicsInit("Billard", width + 275, height + 150, zoom)
     graphicsInit3D(width, height)
-
-    # Initialize objects
+    
+    # Initialize objects:
     initTable()
     initBalls()
     initQueue()
@@ -296,25 +304,17 @@ def main():
     # Register idle function:
     glutIdleFunc(idle)
 
-    # register keyboard function:
+    # Register keyboard function:
     glutKeyboardFunc(keyboard)
 
-    # register mouse function
+    # Register mouse functions:
     glutMouseFunc(mouse)
     glutPassiveMotionFunc(mouseMotion)
 
-    # glutReshapeFunc(reshape)
+    #glutReshapeFunc(reshape)
 
-    # textureBalken = LadeTextur("Texturen/balken.bmp")
-    # tisch.init(breite, hoehe, bande, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, lochgroesseMitte, lochgroesseEcke, 0.0, 0.0, 0.0, LadeTextur("Texturen/tisch.bmp"), texturBalken, LadeTextur("Texturen/gameover.bmp"));
-
-    # initKugeln()
-
-    # queue.init(100.0, 15000.0, texturBalken)
-    # queue.init_position(kugel[0], zoom)
-
-    # time measurement:
-    # diff_seconds()       # do I need this?
+    # Time measurement:
+    #diff_seconds()       # do I need this?
 
     # Show window:
     glutMainLoop()
