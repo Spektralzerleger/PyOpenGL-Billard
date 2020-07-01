@@ -26,14 +26,12 @@ def random_matrix():
     glMatrixMode(GL_MODELVIEW)
     glPushMatrix()
     glLoadIdentity()
-
     glPushMatrix()
     glRotatef(theta1, 1.0, 0.0, 0.0)
     glRotatef(theta2, 0.0, 1.0, 0.0)
     glRotatef(theta3, 0.0, 0.0, 1.0)
     matrix = glGetDoublev(GL_MODELVIEW_MATRIX)
     glPopMatrix()
-
     glPopMatrix()
     # glLoadIdentity() ??
     return matrix
@@ -133,7 +131,7 @@ class Ball:
 
             glPopMatrix()
 
-            # Friction!!!
+            # Friction!!! Could do it as global parameter
             if v_norm > 0.0:
                 v_prime_norm = v_norm - 68 * t  # tune this parameter for real effect
 
@@ -191,7 +189,7 @@ class Ball:
 
             # Turn on textures
             glEnable(GL_TEXTURE_2D)
-            glBindTexture(GL_TEXTURE_2D, self.texture)  ### fix ??
+            glBindTexture(GL_TEXTURE_2D, self.texture)
 
             # Here we move, rotate and draw the ball
             glPushMatrix()
@@ -259,7 +257,6 @@ class Ball:
         # lower middle
         d[5] = np.sqrt(((gameboard_width / 2) - (self.x)) ** 2 + ((gameboard_height - border) - (self.y)) ** 2)
 
-        # changes in "disappear"
         for i in range(4):  # holes on edges
             if d[i] < hole_radius_edges:
                 self.potted = True
@@ -272,7 +269,7 @@ class Ball:
             self.radius -= 0.04 * 2000 * t
             counter += 1  # increase by 1
 
-            # stop the ball
+            # Stop the ball
             v_norm = np.sqrt(self.vx ** 2 + self.vy ** 2)
             v_prime_norm = v_norm - 50000 * t
 
@@ -290,7 +287,7 @@ class Ball:
                     self.radius = 29.1  # parameter
                     self.vy = 0.0
 
-                # set_matrix() ?
+                # set_matrix() ? maybe this causes the bug after the white ball is potted
 
                 if self.number == 0:
                     self.vx = 0.0

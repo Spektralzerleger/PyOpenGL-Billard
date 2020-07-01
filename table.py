@@ -1,5 +1,5 @@
 """
-Last modified: 28.06.2020
+Last modified: 01.07.2020
 
 The table class is defined here. You can change the layout of the table.
 """
@@ -50,9 +50,7 @@ class Table:
             glVertex2f(self.gameboardwidth, 0)
             glVertex2f(self.gameboardwidth, self.gameboardheight)
             glVertex2f(0, self.gameboardheight)
-            glEnd()
 
-            glBegin(GL_QUADS)
             glColor3f(self.gameboard_r, self.gameboard_g, self.gameboard_b)
             glVertex2f(self.border, self.border)
             glVertex2f(self.gameboardwidth - self.border, self.border)

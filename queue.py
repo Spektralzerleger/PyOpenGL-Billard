@@ -1,5 +1,5 @@
 """
-Last modified: 30.06.2020
+Last modified: 01.07.2020
 
 The queue class is defined here. It is the stick with which you play the game.
 The top of the queue is positioned right on the balls surface and moves when you
@@ -93,7 +93,6 @@ class Queue:
             # Design option 1
             if self.design == 1:
                 glBegin(GL_QUADS)
-
                 glColor3f(0.1, 0.1, 0.1)
                 glVertex2f(self.x, self.y + 2)
                 glVertex2f(self.x + 2, self.y + 2)
@@ -122,7 +121,6 @@ class Queue:
                 glVertex2f(self.x + 200, self.y + 5)
                 glVertex2f(self.x + 400, self.y + 6)
                 glVertex2f(self.x + 400, self.y - 6)
-
                 glEnd()
 
             # Design option 2
@@ -138,9 +136,7 @@ class Queue:
                 glColor3f(1.0, 1.0, 0.0)
                 glVertex2f(self.x + queue_length, self.y + queue_end / 2)
                 glVertex2f(self.x + queue_length, self.y - queue_end / 2)
-                glEnd()
 
-                glBegin(GL_QUADS)
                 glColor3f(0.0, 0.0, 0.0)
                 glVertex2f(self.x, self.y - queue_top / 2)
                 glVertex2f(self.x, self.y + queue_top / 2)
@@ -151,7 +147,7 @@ class Queue:
             # Design option 3
             if self.design == 3:
                 queue_top = 20
-                queue_length = 100
+                queue_length = 270
                 queue_end = 20
 
                 # yellow rectangle
@@ -164,7 +160,6 @@ class Queue:
                 glVertex2f(self.x + queue_length, self.y - queue_end / 2)
 
                 # black stripe
-                glBegin(GL_QUADS)
                 glColor3f(0.0, 0.0, 0.0)
                 glVertex2f(self.x + 30, self.y - queue_top / 4)
                 glVertex2f(self.x + 30, self.y + queue_top / 4)
@@ -172,7 +167,6 @@ class Queue:
                 glVertex2f(self.x + queue_length, self.y - queue_end / 4)
 
                 # red end
-                glBegin(GL_QUADS)
                 glColor3f(1.0, 0.0, 0.0)
                 glVertex2f(self.x + queue_length, self.y - queue_top / 1.9)
                 glVertex2f(self.x + queue_length, self.y + queue_top / 1.9)
@@ -180,7 +174,6 @@ class Queue:
                 glVertex2f(self.x + queue_length + 5.5, self.y - queue_end / 2.8)
 
                 # brown top
-                glBegin(GL_QUADS)
                 glColor3f(0.8, 0.6, 0.3)
                 glVertex2f(self.x, self.y)
                 glVertex2f(self.x, self.y)
@@ -188,7 +181,6 @@ class Queue:
                 glVertex2f(self.x + 30, self.y - queue_top / 2)
 
                 # gray top
-                glBegin(GL_QUADS)
                 glColor3f(0.3, 0.3, 0.3)
                 glVertex2f(self.x, self.y)
                 glVertex2f(self.x, self.y)
@@ -196,7 +188,6 @@ class Queue:
                 glVertex2f(self.x + 10, self.y - queue_top / 4.5)
 
                 # small brown triangle 1
-                glBegin(GL_QUADS)
                 glColor3f(0.8, 0.6, 0.3)
                 glVertex2f(self.x + 30, self.y + queue_top / 2)
                 glVertex2f(self.x + 30, self.y)
@@ -204,13 +195,11 @@ class Queue:
                 glVertex2f(self.x + 35, self.y + queue_top / 4)
 
                 # small brown triangle 2
-                glBegin(GL_QUADS)
                 glColor3f(0.8, 0.6, 0.3)
                 glVertex2f(self.x + 30, self.y - queue_top / 2)
                 glVertex2f(self.x + 30, self.y)
                 glVertex2f(self.x + 35, self.y - queue_top / 4)
                 glVertex2f(self.x + 35, self.y - queue_top / 4)
-
                 glEnd()
 
             glPopMatrix()
@@ -335,13 +324,12 @@ class Queue:
                     glBlendFunc(GL_ONE, GL_ONE)
 
                     glBegin(GL_LINE_STRIP)
-
                     glColor3f(0.2, 0.2, 0.2)
                     glVertex2f(x1, y1)
                     glVertex2f(x2, y2)
                     glVertex2f(x3, y3)
-
                     glEnd()
+
                     glLineWidth(1.0)
                     glDisable(GL_BLEND)
 
@@ -391,18 +379,14 @@ class Queue:
 
         balkeny = (self.xTarget * (gameboardheight - 140) / self.xTargetMax) + 70
 
-        glEnable(GL_TEXTURE_2D)  # enable 2d texture
-        glBindTexture(GL_TEXTURE_2D, self.texture)  # which texture to use
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(gameboardwidth, balkeny)
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(gameboardwidth, balkeny + 2000)
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(gameboardwidth + 300, balkeny + 2000)
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(gameboardwidth + 300, balkeny)
+        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, balkeny)
+        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, balkeny + 2000)
+        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny + 2000)
+        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny)
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -410,14 +394,10 @@ class Queue:
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glColor3f(0.5, 0.5, 0.5)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(gameboardwidth, balkeny)
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(gameboardwidth, balkeny + 10)
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(gameboardwidth + 300, balkeny + 10)
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(gameboardwidth + 300, balkeny)
+        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, balkeny)
+        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, balkeny + 10)
+        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny + 10)
+        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny)
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -442,14 +422,10 @@ class Queue:
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(gameboardwidth, 0)
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(gameboardwidth, gameboardheight)
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(gameboardwidth + 300, gameboardheight)
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(gameboardwidth + 300, 0)
+        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, 0)
+        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, gameboardheight)
+        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, gameboardheight)
+        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, 0)
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -470,14 +446,10 @@ class Queue:
         glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(gameboardwidth, 0)
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(gameboardwidth, gameboardheight)
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(gameboardwidth + 300, gameboardheight)
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(gameboardwidth + 300, 0)
+        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, 0)
+        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, gameboardheight)
+        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, gameboardheight)
+        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, 0)
         glEnd()
         glDisable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
@@ -507,7 +479,7 @@ class Queue:
 
             glEnable(GL_BLEND)
             glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR)
-            glColor3f(0.3, 0.3, 0.3)
+            glColor3f(0.3, 0.3, 0.3) # Shadow color
 
             # Draw shadow for queue design 1
             if self.design == 1:
@@ -569,16 +541,13 @@ class Queue:
 
                 # yellow rectangle
                 glBegin(GL_QUADS)
-
                 glVertex2f(self.x + 30, self.y - queuetop / 2)
                 glVertex2f(self.x + 30, self.y + queuetop / 2)
-
                 glVertex2f(self.x + queuelength, self.y + queueend / 2)
                 glVertex2f(self.x + queuelength, self.y - queueend / 2)
 
                 """
                 # black stripe
-                glBegin(GL_QUADS)
                 glVertex2f(x + 30, y - queuetop / 4)
                 glVertex2f(x + 30, y + queuetop / 4)
                 glVertex2f(x + queuelength, y + queueend / 4)
@@ -586,14 +555,12 @@ class Queue:
                 """
 
                 # red end
-                glBegin(GL_QUADS)
                 glVertex2f(self.x + queuelength, self.y - queuetop / 1.9)
                 glVertex2f(self.x + queuelength, self.y + queuetop / 1.9)
                 glVertex2f(self.x + queuelength + 5.5, self.y + queueend / 2.8)
                 glVertex2f(self.x + queuelength + 5.5, self.y - queueend / 2.8)
 
                 # brown top
-                glBegin(GL_QUADS)
                 glVertex2f(self.x, self.y)
                 glVertex2f(self.x, self.y)
                 glVertex2f(self.x + 30, self.y + queuetop / 2)
@@ -601,27 +568,23 @@ class Queue:
 
                 """
                 # gray top
-                glBegin(GL_QUADS)
                 glVertex2f(self.x, self.y)
                 glVertex2f(self.x, self.y)
                 glVertex2f(self.x + 10, self.y + queuetop / 4.5)
                 glVertex2f(self.x + 10, self.y - queuetop / 4.5)
 
                 # small brown triangle 1
-                glBegin(GL_QUADS)
                 glVertex2f(self.x + 30, self.y + queuetop / 2)
                 glVertex2f(self.x + 30, self.y)
                 glVertex2f(self.x + 35, self.y + queuetop / 4)
                 glVertex2f(self.x + 35, self.y + queuetop / 4)
 
                 # small brown triangle 2
-                glBegin(GL_QUADS)
                 glVertex2f(self.x + 30, self.y - queuetop / 2)
                 glVertex2f(self.x + 30, self.y)
                 glVertex2f(self.x + 35, self.y - queuetop / 4)
                 glVertex2f(self.x + 35, self.y - queuetop / 4)
                 """
-
                 glEnd()
 
             glPopMatrix()
