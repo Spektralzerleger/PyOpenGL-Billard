@@ -20,9 +20,9 @@ class Queue:
         """Initialize the queue.
 
         Args:
-            _v (float): Initial speed
-            _a (float): Initial acceleration
-            _texture (int): Texture ID number
+            _v (float): Initial speed. How fast the queue should move backwards.
+            _a (float): Initial acceleration. How much it should accelerate towards the white ball.
+            _texture (int): Texture ID number for the strength indicator bar.
         """
         self.v = _v
         self.a = _a
@@ -47,7 +47,7 @@ class Queue:
 
         self.draw_target_assistance = True
 
-    def init_position(self, whiteBall, zoom):  # decide which one to take...
+    def init_position(self, whiteBall, zoom):
         if self.visible == False:
             self.x = whiteBall.x + whiteBall.radius * zoom
             self.y = whiteBall.y
@@ -341,11 +341,13 @@ class Queue:
             t (float): Time difference in seconds.
         """
         if (self.visible == True) and (self.move == True):
+            # Move backwards and load the hit
             if self.xTarget < self.xTargetMax:
                 self.x += self.v * t
                 self.xTarget += self.v * t
 
         if (self.visible == True) and (self.move == False):
+            # Release and accelerate towards the white ball
             if self.xTarget > 0:
                 self.xTarget -= self.v * t
                 self.x -= self.v * t
@@ -377,16 +379,20 @@ class Queue:
         gameboardwidth = table.gameboardwidth
         gameboardheight = table.gameboardheight
 
-        balkeny = (self.xTarget * (gameboardheight - 140) / self.xTargetMax) + 70
+        bar_y = (self.xTarget * (gameboardheight - 140) / self.xTargetMax) + 70
 
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, balkeny)
-        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, balkeny + 2000)
-        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny + 2000)
-        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny)
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(gameboardwidth, bar_y)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(gameboardwidth, bar_y + 2000)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(gameboardwidth + 300, bar_y + 2000)
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(gameboardwidth + 300, bar_y)
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -394,10 +400,14 @@ class Queue:
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glColor3f(0.5, 0.5, 0.5)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, balkeny)
-        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, balkeny + 10)
-        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny + 10)
-        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, balkeny)
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(gameboardwidth, bar_y)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(gameboardwidth, bar_y + 10)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(gameboardwidth + 300, bar_y + 10)
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(gameboardwidth + 300, bar_y)
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -409,8 +419,8 @@ class Queue:
         glVertex2f(gameboardwidth + 200, 70)
         glEnd()
 
-    def balkenzeichnen(self, table):
-        """Draw sth...
+    def draw_bar(self, table):
+        """Draw the bar which indicates the strength of the queue hit.
 
         Args:
             table (Table): Get table size.
@@ -422,10 +432,14 @@ class Queue:
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, 0)
-        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, gameboardheight)
-        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, gameboardheight)
-        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, 0)
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(gameboardwidth, 0)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(gameboardwidth, gameboardheight)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(gameboardwidth + 300, gameboardheight)
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(gameboardwidth + 300, 0)
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -446,10 +460,14 @@ class Queue:
         glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 0.0); glVertex2f(gameboardwidth, 0)
-        glTexCoord2f(1.0, 0.0); glVertex2f(gameboardwidth, gameboardheight)
-        glTexCoord2f(1.0, 1.0); glVertex2f(gameboardwidth + 300, gameboardheight)
-        glTexCoord2f(0.0, 1.0); glVertex2f(gameboardwidth + 300, 0)
+        glTexCoord2f(0.0, 0.0)
+        glVertex2f(gameboardwidth, 0)
+        glTexCoord2f(1.0, 0.0)
+        glVertex2f(gameboardwidth, gameboardheight)
+        glTexCoord2f(1.0, 1.0)
+        glVertex2f(gameboardwidth + 300, gameboardheight)
+        glTexCoord2f(0.0, 1.0)
+        glVertex2f(gameboardwidth + 300, 0)
         glEnd()
         glDisable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
@@ -479,7 +497,7 @@ class Queue:
 
             glEnable(GL_BLEND)
             glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR)
-            glColor3f(0.3, 0.3, 0.3) # Shadow color
+            glColor3f(0.3, 0.3, 0.3)  # Shadow color
 
             # Draw shadow for queue design 1
             if self.design == 1:

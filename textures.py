@@ -40,8 +40,12 @@ def load_texture(filename):
         print(filename + " not found")
         return 0
 
+    """glTexImage2D expects the first element of the image data to be the bottom-left corner of
+    the image. Subsequent elements go left to right, with subsequent lines going from bottom to top.
+    However, our read-in image data goes left to right and top to bottom.
+    So, we need to flip the vertical coordinate y."""
     # Load image
-    img = Image.open(filename)
+    img = Image.open(filename).transpose(Image.FLIP_TOP_BOTTOM)
     img_data = np.array(list(img.getdata()), np.uint8)
     width = img.size[0]
     height = img.size[1]

@@ -6,7 +6,8 @@ This is the main part of the code where the GLUT window is initialized and the g
 Here, you can also change the setup like the number of balls, their friction or the window size.
 
 To do: FIX bugs, document!!!
-Bugs: Initialization of white ball after it was potted, some textures are turned around, idle function (maybe with Timer?) 
+Bugs: Idle function (maybe with Timer?) or pygame window?
+Maybe improve texture loading, rendering, mipmaps, frame buffer objects...
 
 UNITS: 1 corresponds to 1mm in reality
 """
@@ -52,7 +53,8 @@ def display():
 
     table.draw()
 
-    queue.balkenzeichnen(table)
+    # Draw the strength indicator bar
+    queue.draw_bar(table)
 
     for i in range(N):
         ball[i].draw_shadow()
@@ -102,7 +104,7 @@ def idle():
             if ball[0].visible == False:
                 ball[0].x = 600
                 ball[0].y = height / 2
-                ball[0].vx = 0.0          # solves the bug
+                ball[0].vx = 0.0  # solves the bug
                 ball[0].visible = True
                 ball[0].potted = False
                 ball[0].radius = ballRadius
@@ -212,11 +214,15 @@ def mouseMotion(x, y):
     return
 
 
-"""
-# Call this function when size of the window changes
 def reshape(width, height):
+    """This function is called when you try to reshape your window.
+
+    Args:
+        width (int): Window width.
+        height (int): Window height.
+    """
     glutReshapeWindow(window_width, window_height)
-"""
+    return
 
 
 def initTable():
@@ -276,8 +282,8 @@ def initBalls():
 def initQueue():
     """Here we initialize the queue. The queue has the following properties:
             Queue(v, a, texture)
-        * v = Initial --- ?
-        * a = Initial --- ?
+        * v = Initial velocity. How fast it should move backwards.
+        * a = Initial acceleration. How fast it should accelerate towards the white ball.
         * texture = Texture of the strength indicator on the right side of the window.
     """
     global queue, ball
@@ -288,12 +294,11 @@ def initQueue():
     return
 
 
-
 def main():
     # Initialize window graphics:
     graphicsInit("Billard", width + 275, height + 150, zoom)
-    graphicsInit3D(width, height)
-    
+    graphicsInit3D()
+
     # Initialize objects:
     initTable()
     initBalls()
@@ -313,10 +318,11 @@ def main():
     glutMouseFunc(mouse)
     glutPassiveMotionFunc(mouseMotion)
 
-    #glutReshapeFunc(reshape)
+    # Register reshape function:
+    glutReshapeFunc(reshape)
 
     # Time measurement:
-    #diff_seconds()       # do I need this?
+    # diff_seconds()       # do I need this?
 
     # Show window:
     glutMainLoop()

@@ -11,16 +11,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 
-def graphicsChangeSize(width, height):
-    """Prevents that changing the window size changes the displayed graphics.
-
-    Args:
-        width (int): Window width
-        height (int): Window height
-    """
-    return
-
-
 def graphicsInit(windowname, width, height, zoom):
     """Initialize a GLUT-graphics window.
 
@@ -38,7 +28,6 @@ def graphicsInit(windowname, width, height, zoom):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluOrtho2D(0, width, 0, height)
-    #glutReshapeFunc(graphicsChangeSize)
 
 
 def graphicsBall(x, y, radius):
@@ -70,12 +59,8 @@ def graphicsText(x, y, text):
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, ord(text[i]))
 
 
-def graphicsInit3D(width, height):
+def graphicsInit3D():
     """Initialize 3D graphics mode.
-
-    Args:
-        width (int): what width?
-        height (int): what height?
     """
     global sphere
     # Create sphere
@@ -97,8 +82,8 @@ def graphicsEnable3D(width, height):
     """Enable 3D graphics mode.
 
     Args:
-        width (int): what width?
-        height (int): what height?
+        width (int): Window width.
+        height (int): Window height.
     """
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
@@ -123,9 +108,9 @@ def graphicsDisable3D(width, height, zoom):
     """Disable 3D graphics mode.
 
     Args:
-        width (int): ?
-        height (int): ?
-        zoom (float): Zoom factor to scale the window size
+        width (int): Window width.
+        height (int): Window height.
+        zoom (float): Zoom factor to scale the window size.
     """
     glDisable(GL_LIGHTING)
     glDisable(GL_COLOR_MATERIAL)
@@ -143,6 +128,6 @@ def graphicsBall3D(radius):
     """Draw 3D ball with given radius.
 
     Args:
-        radius (float): Radius of the ball
+        radius (float): Radius of the ball.
     """
     gluSphere(sphere, radius, 20, 20)
