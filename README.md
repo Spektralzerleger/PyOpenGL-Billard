@@ -43,7 +43,7 @@ Now, I wanted to refresh my knowledge in OpenGL and "translate" the code to Pyth
 
 The actual game looks something like this:
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/37344742/86500252-201e0500-bd90-11ea-81be-1249bde20171.png">
+  <img src="https://user-images.githubusercontent.com/37344742/86500795-e9e28480-bd93-11ea-9713-815e97a60b35.png">
 </p>
 
 ### Features: <br/>
