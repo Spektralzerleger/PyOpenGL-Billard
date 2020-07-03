@@ -2,6 +2,8 @@
 Last modified: 29.06.2020
 
 The ball class is defined here. All the important informations of a ball are stored here.
+
+FIX: More efficient rendering.
 """
 
 from graphics import *
@@ -9,9 +11,7 @@ from table import *
 from textures import *
 
 
-# First some help functions
-
-# Create random matrix
+# Help function for ball initialization
 def random_matrix():
     """Function that creates a random matrix for initial ball position.
 
@@ -33,32 +33,8 @@ def random_matrix():
     matrix = glGetDoublev(GL_MODELVIEW_MATRIX)
     glPopMatrix()
     glPopMatrix()
-    # glLoadIdentity() ??
     return matrix
 
-
-"""
-def set_matrix():
-    theta1 = -90
-    theta2 = 105
-
-    if self.number > 8:
-        theta2 = 75
-
-    glMatrixMode(GL_MODELVIEW)
-    glPushMatrix()
-    glLoadIdentity()
-
-    glPushMatrix()
-    glRotatef(theta2, 0.0, 1.0, 0.0)
-    glRotatef(theta1, 1.0, 0.0, 0.0)
-    # glRotatef(theta3, 0.0, 0.0, 1.0)
-    glGetDoublev(GL_MODELVIEW_MATRIX)
-    glPopMatrix()
-
-    glPopMatrix()
-    # glLoadIdentity()
-"""
 
 potted_stripes = 0
 potted_solids = 0
@@ -79,7 +55,7 @@ class Ball:
             _r ([type]): [description] ?
             _g ([type]): [description] ?
             _b ([type]): [description] ?
-            _m ([type]): [description] ?
+            _m (float): Mass of the ball. For collision calculations.
             _number (int): Number of the ball. Defines also the texture.
         """
         self.x = _x
@@ -114,7 +90,15 @@ class Ball:
         self.y_shadow = -6
 
     def move(self, t):
-        if self.visible:
+        """Function that defines how to move a ball.
+
+        Args:
+            t (float): Time parameter.
+
+        Returns:
+            bool: True, if ball still moves after time t. False, if not.
+        """
+        if self.visible == True:
             self.x += self.vx * t
             self.y += self.vy * t
 
@@ -177,7 +161,7 @@ class Ball:
             zoom (int): Zoom factor to scale the window size. Scales also the ball size.
         """
         # For "disappearing" animation
-        # For all balls exept white and black
+        # For all balls except white and black
         if ((self.number == 0 and self.visible == False) or (self.number == 8 and self.visible == False)) == False:
 
             # Set position of light source because it depends on the position of the ball
@@ -287,7 +271,8 @@ class Ball:
                     self.radius = 29.1  # parameter
                     self.vy = 0.0
 
-                # set_matrix() ? maybe this causes the bug after the white ball is potted
+                # Set the right initial position for rolling in
+                self.matrix = self.set_matrix()
 
                 if self.number == 0:
                     self.vx = 0.0
@@ -317,13 +302,13 @@ class Ball:
             d = np.sqrt((self.x - otherBall.x) ** 2 + (self.y - otherBall.y) ** 2)
 
             if d <= (self.radius + otherBall.radius):
-                # ...
+                # Parameters of the first ball
                 m1 = self.m
                 x1 = self.x
                 y1 = self.y
                 v1x = self.vx
                 v1y = self.vy
-                # ...
+                # Parameters of the second ball
                 m2 = otherBall.m
                 x2 = otherBall.x
                 y2 = otherBall.y
@@ -393,3 +378,29 @@ class Ball:
                 self.vx = 0.0
                 self.x = 1300 - potted_solids * (np.pi * self.radius)
                 potted_solids += 1
+
+    # Help function
+    def set_matrix(self):
+        """Function that sets the potted balls, so they appear face up.
+
+        Returns:
+            matrix: Start configuration of potted balls for rolling.
+        """
+        theta1 = -90
+        theta2 = 105
+        theta3 = 180
+
+        if self.number > 8:
+            theta2 = 75
+
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glPushMatrix()
+        glRotatef(theta2, 0.0, 1.0, 0.0)
+        glRotatef(theta1, 1.0, 0.0, 0.0)
+        glRotatef(theta3, 0.0, 0.0, 1.0)
+        matrix = glGetDoublev(GL_MODELVIEW_MATRIX)
+        glPopMatrix()
+        glPopMatrix()
+        return matrix

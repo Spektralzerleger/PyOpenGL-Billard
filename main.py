@@ -6,6 +6,7 @@ This is the main part of the code where the GLUT window is initialized and the g
 Here, you can also change the setup like the number of balls, their friction or the window size.
 
 To do: FIX bugs, document!!!
+Bugs: Initialization of white ball after it was potted, some textures are turned around, idle function (maybe with Timer?) 
 
 UNITS: 1 corresponds to 1mm in reality
 """
@@ -101,6 +102,7 @@ def idle():
             if ball[0].visible == False:
                 ball[0].x = 600
                 ball[0].y = height / 2
+                ball[0].vx = 0.0          # solves the bug
                 ball[0].visible = True
                 ball[0].potted = False
                 ball[0].radius = ballRadius
