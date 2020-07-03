@@ -32,6 +32,7 @@ try:
 except:
   print("ERROR: PyOpenGL not installed properly.")
 ```
+If you still encounter problems when compiling, try to upgrade your numpy version or uninstall PyOpenGL_accelerate. <br/>
 Moreover, I use PIL to load the textures and work with the images. If you haven't installed it, try
 ```
 pip install Pillow
