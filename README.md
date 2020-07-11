@@ -41,4 +41,18 @@ pip install Pillow
 Short story: Originally, the game was implemented in C++ when I participated at the JuniorScienceAcademy in 2013. <br/>
 Now, I wanted to refresh my knowledge in OpenGL and "translate" the code to Python.
 
-Put a Screenshot here
+The actual game looks something like this:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37344742/86500795-e9e28480-bd93-11ea-9713-815e97a60b35.png">
+</p>
+
+### Features: <br/>
+* Three different design options for the queue
+* Possibility to turn on a target assistance (white ray)
+* Strength visualization with a colorbar on the right
+* Score visualization of the potted balls of each player
+* Possibility to adjust the mass, size, friction etc. of the balls
+* Possibility to stop the motion or restart the game
+
+### Bugs: <br/>
+This code runs very slow with Python! One could do only one calculation step in the idle function but then the physics would break and it would come to unrealistic collision effects. So, one has to improve the computation time and speed up the rendering process.
