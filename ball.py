@@ -1,7 +1,7 @@
 """
-Last modified: 29.06.2020
+Last modified: 11.07.2020
 
-The ball class is defined here. All the important informations of a ball are stored here.
+The ball class is defined here. All the important information of a ball are stored here.
 
 FIX: More efficient rendering.
 """
@@ -52,9 +52,9 @@ class Ball:
             _radius (float): Radius of the ball
             _vx (float): x component of the balls velocity
             _vy (float): y component of the balls velocity
-            _r ([type]): [description] ?
-            _g ([type]): [description] ?
-            _b ([type]): [description] ?
+            _r ([type]): R value of the ball color for 2D image
+            _g ([type]): G value of the ball color for 2D image
+            _b ([type]): b value of the ball color for 2D image
             _m (float): Mass of the ball. For collision calculations.
             _number (int): Number of the ball. Defines also the texture.
         """
@@ -69,12 +69,11 @@ class Ball:
         self.m = _m
         self.number = _number
 
-        # Comment....
+        # Private variables
         self.visible = True
         self.potted = False
         self.shift = False
         self.phi = 0.0
-        # self.d = 0
         self.texture = load_texture("Textures/{}.bmp".format(_number))
 
         """
@@ -100,7 +99,7 @@ class Ball:
         """
         if self.visible == True:
             self.x += self.vx * t
-            self.y += self.vy * t
+            self.y += self.vy * t  # Maybe do this to the end?! Like in article https://gafferongames.com/post/integration_basics/
 
             v_norm = np.sqrt(self.vx ** 2 + self.vy ** 2)
             self.phi = t * v_norm / self.radius
@@ -155,7 +154,7 @@ class Ball:
                     graphicsText(self.x - 4.5, self.y - 3.5, str(self.number))
 
     def draw3d(self, zoom):
-        """Draw the 3D ball...
+        """Draw the 3D ball with texture.
 
         Args:
             zoom (int): Zoom factor to scale the window size. Scales also the ball size.
@@ -193,20 +192,41 @@ class Ball:
         height = table.gameboardheight
         border = table.border
 
+        # Elasticity
         friction = 0.75
 
         if self.potted == False:
-            if (self.x + self.radius > width - border) or (self.x - self.radius < border):
+            # Collision with the right table side
+            if (self.x + self.radius > width - border) and (self.vx > 0):
+                self.x = width - border - self.radius
                 self.vx = -self.vx
                 self.vx *= friction
                 self.vy *= friction
-                self.move(t)
+                #self.move(t)
 
-            if (self.y + self.radius > height - border) or (self.y - self.radius < border):
+            # Collision with the left table side
+            if (self.x - self.radius < border) and (self.vx < 0):
+                self.x = border + self.radius
+                self.vx = -self.vx
+                self.vx *= friction
+                self.vy *= friction
+                #self.move(t)
+
+            # Collision with the bottom of the table
+            if (self.y + self.radius > height - border) and (self.vy > 0):
+                self.y = height - border - self.radius
                 self.vy = -self.vy
                 self.vx *= friction
                 self.vy *= friction
-                self.move(t)
+                #self.move(t)
+            
+            # Collision with the top of the table
+            if (self.y - self.radius < border) and (self.vy < 0):
+                self.y = border + self.radius
+                self.vy = -self.vy
+                self.vx *= friction
+                self.vy *= friction
+                #self.move(t)
 
         self.disappear(table, t)
 
@@ -291,48 +311,52 @@ class Ball:
                     self.y = 1545
 
     def ball_collision(self, otherBall, t):
-        """Ball - ball collision....
+        """Ball - ball collision.
 
         Args:
-        otherBall (Ball): other ball
-        t (float): time
+            otherBall (Ball): other ball
+            t (float): time
         """
         if (self.potted == False) and (self.visible == True) and (otherBall.visible == True):
 
+            # Distance between the two ball centers
             d = np.sqrt((self.x - otherBall.x) ** 2 + (self.y - otherBall.y) ** 2)
 
             if d <= (self.radius + otherBall.radius):
                 # Parameters of the first ball
                 m1 = self.m
-                x1 = self.x
-                y1 = self.y
-                v1x = self.vx
-                v1y = self.vy
+                x1 = self.x; v1x = self.vx
+                y1 = self.y; v1y = self.vy
                 # Parameters of the second ball
                 m2 = otherBall.m
-                x2 = otherBall.x
-                y2 = otherBall.y
-                v2x = otherBall.vx
-                v2y = otherBall.vy
-                # ...
+                x2 = otherBall.x; v2x = otherBall.vx
+                y2 = otherBall.y; v2y = otherBall.vy
+                # -cos() and sin()
                 d_0x = (x1 - x2) / np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
                 d_0y = (y1 - y2) / np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-                # ...
+                # Factor
                 k = (2 * (d_0x * (v2x - v1x) + d_0y * (v2y - v1y))) / (1 / m1 + 1 / m2)
 
+                # Elasticity
                 friction = 0.95  # could do it as global parameter
                 v1x_prime = v1x + (k / m1) * d_0x
                 v1y_prime = v1y + (k / m1) * d_0y
                 v2x_prime = v2x - (k / m2) * d_0x
                 v2y_prime = v2y - (k / m2) * d_0y
+                
+                # Set new position, such that the balls aren't inside each other anymore
+                delta = self.radius + otherBall.radius - d
+                self.x += delta * d_0x
+                self.y += delta * d_0y
 
+                # Set new velocities
                 self.vx = v1x_prime * friction
                 otherBall.vx = v2x_prime * friction
                 self.vy = v1y_prime * friction
                 otherBall.vy = v2y_prime * friction
 
-                self.move(t)
-                otherBall.move(t)
+                #self.move(t)
+                #otherBall.move(t)
 
     def draw_shadow(self):
         glEnable(GL_BLEND)

@@ -1,12 +1,12 @@
 """
 Edited by: Eugen Dizer
-Last modified: 01.07.2020
+Last modified: 11.07.2020
 
 This is the main part of the code where the GLUT window is initialized and the graphics is rendered.
 Here, you can also change the setup like the number of balls, their friction or the window size.
 
-To do: FIX bugs, document!!!
-Bugs: Idle function (maybe with Timer?) or pygame window?
+To do: FIX bugs!!!
+Bugs: Idle function too slow! (Maybe with Timer or pygame window?)
 Maybe improve texture loading, rendering, mipmaps, frame buffer objects...
 
 UNITS: 1 corresponds to 1mm in reality
@@ -39,10 +39,6 @@ ballRadius = 29.1
 N = 16
 
 gameover = False
-
-# Time measurement
-t = 0.0
-takt = 0.0004
 
 
 def display():
@@ -81,52 +77,46 @@ def idle():
     """This function is responsible for the continuous animation.
     The idle callback is continuously called when events are not being received.
     """
-    global t
-    # Timeflow
-    t = diff_seconds()
-    """
-    Fix idle and collision function!!! maybe with timer function?
-    """
-    if t > 0.25:
-        t = 0.0
+    # How much time has passed since the last frame
+    dt = diff_seconds()
 
-    # One needs these smaller time steps to capture the collisions accurately.
+    """
+    Fix idle and collision function!!
+    """
+    # One needs smaller time steps to capture the collisions accurately.
     # Larger time steps will lead to a strange collision behavior.
-    while t > takt and gameover == False:
-        stand = 0
+    stand = 0
 
-        # Check for standing balls
-        for i in range(N):
-            if ball[i].move(takt) == False:
-                stand += 1
+    # Check for standing balls
+    for i in range(N):
+        if ball[i].move(dt) == False:
+            stand += 1
 
-        if stand == N:
-            if ball[0].visible == False:
-                ball[0].x = 600
-                ball[0].y = height / 2
-                ball[0].vx = 0.0  # solves the bug
-                ball[0].visible = True
-                ball[0].potted = False
-                ball[0].radius = ballRadius
-                ball[0].shift = True
+    if stand == N:
+        if ball[0].visible == False:
+            ball[0].x = 600
+            ball[0].y = height / 2
+            ball[0].vx = 0.0
+            ball[0].visible = True
+            ball[0].potted = False
+            ball[0].radius = ballRadius
+            ball[0].shift = True
 
-            if ball[0].potted == False:
-                queue.init_position(ball[0], zoom)
+        if ball[0].potted == False:
+            queue.init_position(ball[0], zoom)
 
-        # Check the collision with the table
-        for i in range(N):
-            ball[i].table_collision(table, takt)
-            ball[i].roll_out(takt)
+    # Check the collision with the table
+    for i in range(N):
+        ball[i].table_collision(table, dt)
+        ball[i].roll_out(dt)
 
-        # Check the collision with other balls
-        for i in range(N):
-            for j in range(i + 1, N):
-                ball[i].ball_collision(ball[j], takt)
+    # Check the collision with other balls
+    for i in range(N):
+        for j in range(i + 1, N):
+            ball[i].ball_collision(ball[j], dt)
 
-        # Move the queue
-        queue.hit(ball[0], takt)
-
-        t -= takt
+    # Move the queue
+    queue.hit(ball[0], dt)
 
     # Redraw the scene
     glutPostRedisplay()
@@ -290,7 +280,7 @@ def initQueue():
     # Load texture (think about a more efficient way?)
     balken_texture = load_texture("Textures/balken.bmp")
 
-    queue = Queue(100.0, 15000.0, balken_texture)
+    queue = Queue(80.0, 2000.0, balken_texture)
     return
 
 
@@ -320,9 +310,6 @@ def main():
 
     # Register reshape function:
     glutReshapeFunc(reshape)
-
-    # Time measurement:
-    # diff_seconds()       # do I need this?
 
     # Show window:
     glutMainLoop()
